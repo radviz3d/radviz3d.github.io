@@ -1,0 +1,1298 @@
+---
+title: "Visualizations"
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, error = FALSE)
+```
+
+```{r}
+source("stars.R")
+
+viz2d_3d <- function(x, angles =  2*pi*(0:(ncol(x)-1))/ncol(x)) {
+  y <- apply(X = x, MARGIN = 2, FUN = function(z)((z - min(z))/(max(z) - min(z))))
+  sy <- rowSums(y)/ncol(y)
+  y <- apply(X = y, MARGIN = 1, FUN = function(z)(z/sum(z)))
+  y <- t(y)
+  pr <- cbind(cos(angles), sin(angles))
+  xproj <- cbind(y %*% pr, sy)
+}
+
+# {viz3d} function based on Artero and Oliveira's paper.
+viz3d <- function(x, angles =  2*pi*(0:(ncol(x)-1))/ncol(x)) {
+  y <- apply(X = x, MARGIN = 2, FUN = function(z)((z - min(z))/(max(z) - min(z))))
+  #    x <- apply(X = y, MARGIN = 1, FUN = function(z)(z/sum(z)))
+  #    x <- t(x)
+  pr <- cbind(cos(angles), sin(angles), 1)
+  xproj <- y %*% pr / ncol(y)
+}
+
+# color palette
+load("colpal.rda")
+dk.palette = senator.palette = c(rgb(red = 173, green = 216, blue = 230, max = 255), rgb(max = 255, red = 139, green = 0, blue = 0))
+
+library(MixSim)
+library(MASS)
+library(expm)
+library(grDevices)
+library(freqparcoord)
+library(Rtsne)
+library(Rdimtools)
+library(radviz3d)
+library(rgl)
+library(uwot)
+library(RColorBrewer)
+
+```
+# Simuated Datasets
+
+## Overlap of simulated groups
+```{r echo=F}
+library(MixSim)
+omegas <- c(0.0001, 0.001, 0.01, 0.05, 0.25)
+sim_data <- NULL
+
+set.seed(2020)
+
+for (i in 1:length(omegas)){
+  p = 100
+  Q <- MixGOM(goMega = omegas[i], K = 5, p = p, sph = T, hom = T)
+  print(overlap(Q$Pi, Q$Mu, Q$S)$OmegaMap)
+  A <- simdataset(n = 500, Pi = Q$Pi, Mu = Q$Mu, S = Q$S)
+  sn <- A$X
+  # colnames(sn) <- paste(1:4)
+  class <- as.factor(A$id)
+  sn.df <- data.frame(sn,class)
+  sim_data[[i]] <- sn.df
+}
+
+
+```
+
+## Fig. S1: UMAP and RadViz3D of 100D MixSim Simulated Datasets
+
+
+
+
+```{r}
+res_umap_supervised <- list()
+for (i in 1:length(omegas)){
+  sn.df <- sim_data[[i]]
+  class <- sn.df[,ncol(sn.df)]
+  umap_res <- umap(as.matrix(sn.df[,-ncol(sn.df)]), n_components = 3, y = sn.df[,ncol(sn.df)], target_weight = 0)
+  # umap_res <- umap(as.matrix(sn.g.df[,-20243]), n_components = 3)
+  res1 = data.frame(umap_res, class)
+  colnames(res1) = c("x","y","z","class")
+  # open 3d window
+  
+  # resize window
+  par3d(windowRect = c(100, 100, 612, 612))
+  # plot
+  with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                    col = brewer.pal(5,"Paired")[as.numeric(class)]))
+  res_umap_supervised[[i]] <- rglwidget()
+}
+
+
+res_radviz <- list()
+for (i in 1:length(omegas)){
+  sn.df <- sim_data[[i]]
+  radialvis3d(data = sn.df[,-ncol(sn.df)], cl = as.factor(sn.df[,ncol(sn.df)]), domrp = T, doGtrans = T, lwd = 2, alpha = 0.35, pradius = 0.01, color = brewer.pal(5, "Paired"), message = F)
+  # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
+  # rgl::par3d(viewport = c(0,0,1200, 1200))
+  # legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
+  rgl::rgl.viewpoint(zoom = 0.6)
+  res_radviz[[i]] <- rgl::rglwidget()
+}
+```
+<table width="500" border="0" cellpadding="0">
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+res_umap_supervised[[1]]
+```
+(a) UMAP, omega = 0.0001
+<br />
+</td>
+
+<td align="center" valign="center">
+```{r}
+res_radviz[[1]]
+```
+(f) RadViz3D, omega = 0.0001
+<br />
+</td>
+</tr>
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+res_umap_supervised[[2]]
+```
+(b) UMAP, omega = 0.001
+<br />
+</td>
+
+<td align="center" valign="center">
+```{r}
+res_radviz[[2]]
+```
+(g) RadViz3D, omega = 0.001
+<br />
+</td>
+</tr>
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+res_umap_supervised[[3]]
+```
+(c) UMAP, omega = 0.01
+<br />
+</td>
+
+<td align="center" valign="center">
+```{r}
+res_radviz[[3]]
+```
+(h) RadViz3D, omega = 0.01
+<br />
+</td>
+</tr>
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+res_umap_supervised[[4]]
+```
+(d) UMAP, omega = 0.05
+<br />
+</td>
+
+<td align="center" valign="center">
+```{r}
+res_radviz[[4]]
+```
+(i) RadViz3D, omega = 0.05
+<br />
+</td>
+</tr>
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+res_umap_supervised[[5]]
+```
+(e) UMAP, omega = 0.25
+<br />
+</td>
+
+<td align="center" valign="center">
+```{r}
+res_radviz[[5]]
+```
+(j) UMAP, omega = 0.25
+<br />
+</td>
+</tr>
+</table>
+
+
+
+
+
+
+
+
+# Radviz3d, Viz3D, 3D UMAP, 3D tSNE and Star coordinate plots with OLDA and ULDA
+
+
+
+
+## Fig. S2: Gamma Ray Burst Dataset
+
+
+<table width="500" border="0" cellpadding="0">
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+load("datasets-gdt/GRB_normal.Rda")
+sn <- as.matrix(simd_normal_class[,-1])
+class <- as.factor(simd_normal_class[,1])
+sn.df <- data.frame(sn,class)
+set.seed(1)
+tsne <- Rtsne(as.matrix(sn.df[,-10]), dims = 3, 
+              perplexity=min(500,floor((nrow(sn.df)-1)/3)), 
+              check_duplicates = F,  
+              verbose=F, max_iter = 500)
+res1 = tsne$Y
+res1 = data.frame(res1, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(a) t-SNE
+</td>
+
+<td align="center" valign="center">
+```{r}
+umap_res <- umap(as.matrix(sn.df[,-10]), n_components = 3, y = sn.df[,10])
+res1 = data.frame(umap_res, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+
+```
+<br />
+(b) UMAP
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+```{r}
+# stars with olda
+out2 = do.olda(as.matrix(sn.df[,-10]), ndim = 4, class)
+grb.olda = data.frame(out2$Y,class)
+stars(grb.olda[,-5], grb.olda$class, col.palette = df.palette)
+```
+<br />
+(c) Stars with OLDA
+</td>
+
+<td align="center" valign="center">
+```{r}
+# stars with olda
+out2 = do.ulda(as.matrix(sn.df[,-10]), ndim = 4, class)
+grb.ulda = data.frame(out2$Y,class)
+stars(grb.ulda[,-5], grb.ulda$class, col.palette = df.palette)
+```
+<br />
+(d) Stars with ULDA
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+```{r}
+load("datasets/grbdf.rda")
+
+res1 = viz2d_3d(sndf[,-ncol(sndf)])
+res1 = data.frame(res1, as.factor(sndf[,ncol(sndf)]))
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75,
+                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+# add legend
+# legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
+#          pch = 16, col = df.palette[1:nlevels(res1$class)],
+#          cex=1, inset=c(0.05))
+rglwidget()
+
+```
+<br />
+(e) Viz3D
+</td>
+
+<td align="center" valign="center">
+```{r}
+radialvis3d(data = sndf[,-ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = df.palette)
+# rgl::par3d(windowRect = c(0, 0, 1200, 1200))
+# rgl::par3d(viewport = c(0,0,1200, 1200))
+rgl::rgl.viewpoint(zoom = 0.6)
+rgl::rglwidget()
+```
+<br />
+(f) RadViz3D
+</td>
+</tr>
+</table>
+
+## Fig. S3: Zipcode Digits Dataset
+
+<table width="500" border="0" cellpadding="0">
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+load("datasets-gdt/zip_normal.Rda") 
+zip <- as.matrix(zip_normal_class[,-1])
+class <- as.factor(zip_normal_class$class)
+zip.df <- data.frame(zip,class)
+set.seed(1)
+tsne <- Rtsne(as.matrix(zip.df[,-257]), dims = 3, 
+              perplexity=min(500,floor((nrow(zip.df)-1)/3)), 
+              check_duplicates = F,  
+              verbose=F, max_iter = 500)
+res1 = tsne$Y
+res1 = data.frame(res1, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = zip.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(a) t-SNE
+</td>
+
+<td align="center" valign="center">
+```{r}
+set.seed(1)
+umap_res <- umap(as.matrix(zip.df[,-257]), n_components = 3, y = zip.df[,257], target_weight = 0)
+res1 = data.frame(umap_res, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = zip.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(b) UMAP
+<td>
+</tr>
+
+
+<tr>
+<td align="center" valign="center">
+
+```{r}
+# stars with olda
+out2 = do.olda(as.matrix(zip.df[,-257]), ndim = 4, class)
+zip.olda = data.frame(out2$Y,class)
+stars(zip.olda[,-5], zip.olda$class, col.palette = zip.palette)
+```
+<br />
+(c) Stars with OLDA
+</td>
+
+<td align="center" valign="center">
+
+```{r}
+# stars with ulda
+out2 = do.ulda(as.matrix(zip.df[,-257]), ndim = 4, class)
+zip.ulda = data.frame(out2$Y,class)
+stars(zip.ulda[,-5], zip.ulda$class, col.palette = zip.palette)
+```
+<br />
+(d) Stars with ULDA
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+
+```{r}
+load("datasets/zipdf.rda")
+res1 = viz2d_3d(zipdigit[, -ncol(zipdigit)])
+res1 = data.frame(res1, as.factor(zipdigit[, ncol(zipdigit)]))
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75,
+                  col = zip.palette[1:nlevels(class)][as.numeric(class)]))
+# add legend
+# legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
+#          pch = 16, col = df.palette[1:nlevels(res1$class)],
+#          cex=1, inset=c(0.05))
+rglwidget()
+
+```
+<br />
+(e) Viz3D
+</td>
+
+<td align="center" valign="center">
+```{r}
+load("datasets/zipdf.rda")
+radialvis3d(data = zipdigit[, -ncol(zipdigit)], cl = zipdigit[,ncol(zipdigit)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = zip.palette)
+# rgl::par3d(windowRect = c(0, 0, 1200, 1200))
+# rgl::par3d(viewport = c(0,0,1200, 1200))
+rgl::rgl.viewpoint(zoom = 0.6)
+rgl::rglwidget()
+```
+<br />
+(f) RadViz3D
+</td>
+</tr>
+</table>
+
+## Fig. S4: Faces
+
+<table width="500" border="0" cellpadding="0">
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+load("datasets-gdt/face_normal.Rda")
+#get the cooridinate mean
+y <- face_normal_class[,-1]
+class <- as.factor(face_normal_class$class)
+face.df <- data.frame(y,class)
+g = c(1, 6, 8, 30, 33, 39)
+face.g.df = face.df[face.df$class %in% g, ]
+class = droplevels(face.g.df$class)
+set.seed(1)
+tsne <- Rtsne(as.matrix(face.g.df[,-281]), dims = 3, 
+              perplexity=min(500,floor((nrow(face.g.df)-1)/3)), 
+              check_duplicates = F,  
+              verbose=F, max_iter = 500)
+res1 = tsne$Y
+res1 = data.frame(res1, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(a) t-SNE
+</td>
+
+<td align="center" valign="center">
+
+```{r}
+umap_res <- umap(as.matrix(face.g.df[,-281]), n_components =  3, y = face.g.df[,281])
+
+res1 = data.frame(umap_res, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(b) UMAP
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+```{r}
+out2 = do.olda(as.matrix(face.g.df[,-281]), ndim = 4, class)
+face.olda = data.frame(out2$Y,class)
+stars(face.olda[,-5], face.olda$class, col.palette = df.palette)
+```
+<br />
+(c) Stars with OLDA
+</td>
+
+<td align="center" valign="center">
+```{r}
+out2 = do.ulda(as.matrix(face.g.df[,-281]), ndim = 4, class)
+face.ulda = data.frame(out2$Y,class)
+stars(face.ulda[,-5], face.ulda$class, col.palette = df.palette)
+```
+<br />
+(d) Stars with ULDA
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+
+```{r}
+load("datasets/facedf.rda")
+
+res1 = viz2d_3d(facedf[, -ncol(facedf)])
+res1 = data.frame(res1, as.factor(facedf[, ncol(facedf)]))
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75,
+                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+# add legend
+# legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
+#          pch = 16, col = df.palette[1:nlevels(res1$class)],
+#          cex=1, inset=c(0.05))
+rglwidget()
+
+```
+<br />
+(e) Viz3D
+</td>
+
+<td align="center" valign="center">
+
+```{r}
+load("datasets/facedf.rda")
+radialvis3d(data = facedf[, -ncol(facedf)], cl = facedf[,ncol(facedf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = df.palette, class.labels = c("A", "B", "C", "D", "E", "F"))
+# rgl::par3d(windowRect = c(0, 0, 1200, 1200))
+# rgl::par3d(viewport = c(0,0,1200, 1200))
+# legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
+rgl::rgl.viewpoint(zoom = 0.6)
+rgl::rglwidget()
+```
+</br>
+(f) RadViz3D
+</td>
+</tr>
+</table>
+
+## Fig. S5: Suicide Ideation
+<table width="500" border="0" cellpadding="0">
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+load('datasets-gdt/just_normal.Rda')
+sn.df <- simd_normal_class
+class <- as.factor(sn.df$class)
+sn <- sn.df[,-1]
+sn.df <- data.frame(sn,class)
+set.seed(1)
+tsne <- Rtsne(as.matrix(sn.df[,-157]), dims = 3, 
+              perplexity=min(500,floor((nrow(sn.df)-1)/3)), 
+              check_duplicates = F,  
+              verbose=F, max_iter = 500)
+res1 = tsne$Y
+res1 = data.frame(res1, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(a) t-SNE
+</td>
+
+<td align="center" valign="center">
+
+```{r}
+set.seed(1)
+umap_res <- umap(as.matrix(sn.df[,-157]), n_components =  3, y = sn.df[,157])
+res1 = data.frame(umap_res, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(b) UMAP
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+```{r}
+out2 = do.olda(as.matrix(sn.df[,-157]), ndim = 4, class)
+suicide.olda = data.frame(out2$Y,class)
+stars(suicide.olda[,-5], suicide.olda$class, col.palette = df.palette)
+```
+<br />
+(c) Stars with OLDA
+</td>
+
+<td align="center" valign="center">
+```{r}
+out2 = do.ulda(as.matrix(sn.df[,-157]), ndim = 4, class)
+suicide.ulda = data.frame(out2$Y,class)
+stars(suicide.ulda[,-5], suicide.ulda$class, col.palette = df.palette)
+```
+<br />
+(d) Stars with ULDA
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+```{r}
+load("datasets/justdf.rda")
+res1 = viz2d_3d(sndf[, -ncol(sndf)])
+res1 = data.frame(res1, as.factor(sndf[, ncol(sndf)]))
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75,
+                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+# add legend
+# legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
+#          pch = 16, col = df.palette[1:nlevels(res1$class)],
+#          cex=1, inset=c(0.05))
+rglwidget()
+
+```
+<br />
+(e) Viz3D
+</td>
+
+
+<td align="center" valign="center">
+```{r}
+load("datasets/justdf.rda")
+radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = df.palette, class.labels = c("Non-suicical controls", "Suicidal attempters", "Suicical non-attempters"))
+# rgl::par3d(windowRect = c(0, 0, 1200, 1200))
+# rgl::par3d(viewport = c(0,0,1200, 1200))
+# legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
+rgl::rgl.viewpoint(zoom = 0.6)
+rgl::rglwidget()
+```
+<br />
+(f) RadViz3D
+</td>
+</tr>
+</table>
+
+## Fig. S6: Voting Records of US Senators (Senators Dataset)
+
+<table width="500" border="0" cellpadding="0">
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+load("datasets-gdt/senators_normal.rda")
+senators_normal_class[35,1] = "D"
+senators_normal_class$party <- droplevels(senators_normal_class$party)
+sn <- as.matrix(senators_normal_class[,-1])
+class <- senators_normal_class$party
+sn.df <- data.frame(sn,class)
+set.seed(1)
+tsne <- Rtsne(as.matrix(sn.df[,-543]), dims = 3, 
+              perplexity=min(500,floor((nrow(sn.df)-1)/3)), 
+              check_duplicates = F,  
+              verbose=F, max_iter = 500)
+res1 = tsne$Y
+res1 = data.frame(res1, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = dk.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(a) t-SNE
+</td>
+
+<td align="center" valign="center">
+```{r}
+set.seed(1)
+umap_res <- umap(as.matrix(sn.df[,-543]), n_components =  3, y = sn.df[,543]) 
+
+res1 = data.frame(umap_res, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = dk.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(b) UMAP
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+```{r}
+out2 = do.olda(as.matrix(sn.df[,-543]), ndim = 3, class)
+senator.olda = data.frame(out2$Y,class)
+stars(senator.olda[,-4], senator.olda$class, col.palette = dk.palette)
+```
+<br />
+(c) Stars with OLDA
+</td>
+
+<td align="center" valign="center">
+```{r}
+out2 = do.ulda(as.matrix(sn.df[,-543]), ndim = 3, class)
+senator.ulda = data.frame(out2$Y,class)
+stars(senator.ulda[,-4], senator.ulda$class, col.palette = dk.palette)
+```
+<br />
+(d) Stars with ULDA
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+
+```{r}
+load("datasets/senatordf.rda")
+res1 = viz2d_3d(sndf[, -ncol(sndf)])
+res1 = data.frame(res1, as.factor(sndf[, ncol(sndf)]))
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75,
+                  col = senator.palette[1:nlevels(class)][as.numeric(class)]))
+# add legend
+# legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
+#          pch = 16, col = df.palette[1:nlevels(res1$class)],
+#          cex=1, inset=c(0.05))
+rglwidget()
+
+```
+<br />
+(e) Viz3D
+</td>
+
+<td align="center" valign="center">
+```{r}
+load("datasets/senatordf.rda")
+radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = senator.palette, class.labels = c("Democratic", "Republican"))
+# rgl::par3d(windowRect = c(0, 0, 1200, 1200))
+# rgl::par3d(viewport = c(0,0,1200, 1200))
+rgl::rgl.viewpoint(zoom = 0.6)
+rgl::rglwidget()
+```
+<br />
+(f) RadViz3D
+</td>
+</tr>
+</table>
+
+
+
+## Fig. S7: Autism Spectrum Disorder (ASD) Screening (Autisim Dataset)
+
+<table width="500" border="0" cellpadding="0">
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+load("datasets-gdt/Autism_normal.rda")
+sn <- as.matrix(Autism_normal_class[,-1])
+class <- Autism_normal_class$class
+sn.df <- data.frame(sn,class)
+set.seed(1)
+tsne <- Rtsne(as.matrix(sn.df[,-15]), dims = 3, 
+              perplexity=min(500,floor((nrow(sn.df)-1)/3)), 
+              check_duplicates = F,  
+              verbose=F, max_iter = 500)
+res1 = tsne$Y
+res1 = data.frame(res1, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = dk.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(a) t-SNE
+</td>
+
+
+<td align="center" valign="center">
+```{r}
+set.seed(1)
+umap_res <- umap(as.matrix(sn.df[,-15]), n_components =  3, y = sn.df[,15]) 
+
+res1 = data.frame(umap_res, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = dk.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(b) UMAP
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+```{r}
+out2 = do.olda(as.matrix(sn.df[,-15]), ndim = 3, class)
+autism.olda = data.frame(out2$Y,class)
+stars(autism.olda[,-4], autism.olda$class, col.palette = dk.palette)
+```
+<br />
+(c) Stars with OLDA
+</td>
+
+<td align="center" valign="center">
+```{r}
+out2 = do.ulda(as.matrix(sn.df[,-15]), ndim = 3, class)
+autism.ulda = data.frame(out2$Y,class)
+stars(autism.ulda[,-4], autism.ulda$class, col.palette = dk.palette)
+```
+<br />
+(d) Stars with ULDA
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+```{r}
+load("datasets/autismdf.rda")
+res1 = viz2d_3d(sndf[, -ncol(sndf)])
+res1 = data.frame(res1, as.factor(sndf[, ncol(sndf)]))
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75,
+                  col = senator.palette[1:nlevels(class)][as.numeric(class)]))
+# add legend
+# legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
+#          pch = 16, col = df.palette[1:nlevels(res1$class)],
+#          cex=1, inset=c(0.05))
+rglwidget()
+
+```
+<br />
+(e) Viz3D
+</td>
+
+<td align="center" valign="center">
+```{r}
+load("datasets/autismdf.rda")
+radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = senator.palette, class.labels = c("Normal", "ASD subject"))
+# rgl::par3d(windowRect = c(0, 0, 1200, 1200))
+# rgl::par3d(viewport = c(0,0,1200, 1200))
+# legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
+rgl::rgl.viewpoint(zoom = 0.6)
+rgl::rglwidget()
+```
+<br />
+(f) RadViz3D
+</td>
+</tr>
+</table>
+
+## Fig. S8: SPECT Heart Datset
+
+<table width="500" border="0" cellpadding="0">
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+load("datasets-gdt/SPECT_normal.rda")
+sn <- as.matrix(SPECT_normal_class[,-1])
+class <- as.factor(SPECT_normal_class$class)
+sn.df <- data.frame(sn,class)
+set.seed(1)
+tsne <- Rtsne(as.matrix(sn.df[,-23]), dims = 3, 
+              perplexity=min(500,floor((nrow(sn.df)-1)/3)), 
+              check_duplicates = F,  
+              verbose=F, max_iter = 500)
+res1 = tsne$Y
+res1 = data.frame(res1, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = dk.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(a) t-SNE
+</td>
+
+<td align="center" valign="center">
+```{r}
+set.seed(1)
+umap_res <- umap(as.matrix(sn.df[,-23]), n_components = 3, y = sn.df[,23])
+res1 = data.frame(umap_res, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = dk.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(b) UMAP
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+```{r}
+out2 = do.olda(as.matrix(sn.df[,-23]), ndim = 3, class)
+spect.olda = data.frame(out2$Y,class)
+stars(spect.olda[,-4], spect.olda$class, col.palette = dk.palette)
+```
+<br />
+(c) Stars with OLDA
+</td>
+
+<td align="center" valign="center">
+```{r}
+out2 = do.ulda(as.matrix(sn.df[,-23]), ndim = 3, class)
+spect.ulda = data.frame(out2$Y,class)
+stars(spect.ulda[,-4], spect.ulda$class, col.palette = dk.palette)
+```
+<br />
+(d) Stars with ULDA
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+```{r}
+load("datasets/spectdf.rda")
+res1 = viz2d_3d(sndf[, -ncol(sndf)])
+res1 = data.frame(res1, as.factor(sndf[, ncol(sndf)]))
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75,
+                  col = senator.palette[1:nlevels(class)][as.numeric(class)]))
+# add legend
+# legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
+#          pch = 16, col = df.palette[1:nlevels(res1$class)],
+#          cex=1, inset=c(0.05))
+rglwidget()
+
+```
+<br />
+(e) Viz3D
+</td>
+
+
+<td align="center" valign="center">
+```{r}
+load("datasets/spectdf.rda")
+radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = senator.palette, class.labels = c("Normal", "Abnormal"))
+# rgl::par3d(windowRect = c(0, 0, 1200, 1200))
+# rgl::par3d(viewport = c(0,0,1200, 1200))
+# legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
+rgl::rgl.viewpoint(zoom = 0.6)
+rgl::rglwidget()
+```
+<br />
+(f) RadViz3D
+</td>
+</tr>
+</table>
+
+
+
+
+## Fig. S8: Indic scripts (Script Dataset, 6 groups)
+<table width="500" border="0" cellpadding="0">
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+load("datasets-gdt/indic_normal.rda")
+sn <- as.matrix(indic_normal_class[,-1])
+class <- as.factor(indic_normal_class$class)
+script <- data.frame(sn,class)
+sn.df = script
+g = c(1,3,4,5,6,11)
+sn.g.df = sn.df[sn.df$class %in% g, ]
+class = droplevels(sn.g.df$class)
+set.seed(1)
+tsne <- Rtsne(as.matrix(sn.g.df[,-117]), dims = 3, 
+              perplexity=min(500,floor((nrow(face.g.df)-1)/3)), 
+              check_duplicates = F,  
+              verbose=F, max_iter = 500)
+res1 = tsne$Y
+res1 = data.frame(res1, class)
+colnames(res1) = c("x","y","z","class")
+
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = script.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(a) t-SNE
+</td>
+
+<td align="center" valign="center">
+```{r}
+set.seed(1)
+umap_res <- umap(as.matrix(sn.g.df[,-117]), n_components = 3, y = sn.g.df[,117])
+res1 = data.frame(umap_res, class)
+colnames(res1) = c("x","y","z","class")
+
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = script.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(b) UMAP
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+```{r}
+out2 = do.olda(as.matrix(sn.g.df[,-117]), ndim = 4, class)
+script.olda = data.frame(out2$Y,class)
+stars(script.olda[,-5], script.olda$class, col.palette = script.palette)
+```
+<br />
+(c) Stars with OLDA
+</td>
+
+<td align="center" valign="center">
+```{r}
+out2 = do.ulda(as.matrix(sn.g.df[,-117]), ndim = 4, class)
+script.ulda = data.frame(out2$Y,class)
+stars(script.ulda[,-5], script.ulda$class, col.palette = script.palette)
+```
+<br />
+(d) Stars with ULDA
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="center">
+```{r}
+load("datasets/scriptdf.rda")
+res1 = viz2d_3d(scriptdf[, -ncol(scriptdf)])
+res1 = data.frame(res1, as.factor(scriptdf[, ncol(scriptdf)]))
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75,
+                  col = script.palette[1:nlevels(class)][as.numeric(class)]))
+# add legend
+# legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
+#          pch = 16, col = df.palette[1:nlevels(res1$class)],
+#          cex=1, inset=c(0.05))
+rglwidget()
+
+```
+<br />
+(e) Viz3D
+</td>
+
+
+
+<td align="center" valign="center">
+```{r}
+load("datasets/scriptdf.rda")
+radialvis3d(data = scriptdf[, -ncol(scriptdf)], cl = scriptdf[,ncol(scriptdf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = script.palette, class.labels = c("Bangla", "Gujarati", "Gurmukhi", "Kannada", "Malayalam", "Urdu"))
+# rgl::par3d(windowRect = c(0, 0, 1200, 1200))
+# rgl::par3d(viewport = c(0,0,1200, 1200))
+# legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
+rgl::rgl.viewpoint(zoom = 0.6)
+rgl::rglwidget()
+```
+<br />
+(f) RadViz3D
+</td>
+</tr>
+</table>
+
+## Fig. S9: RNA sequences of human tissues (Gtex Dataset)
+<table width="500" border="0" cellpadding="0">
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+load("datasets-gdt/GTEX_normal.rda")
+sn <- as.matrix(d.red_normal)
+class <- as.factor(as.numeric(as.factor(group)))
+class = as.factor(gsub("13","3",class))
+sn.df = data.frame(sn,class)
+g = c(2,4,5,7,8,9,11,12)
+sn.g.df = sn.df[sn.df$class %in% g, ]
+class = droplevels(sn.g.df$class)
+set.seed(1)
+tsne <- Rtsne(as.matrix(sn.g.df[,-20243]), dims = 3, 
+              perplexity=min(500,floor((nrow(face.g.df)-1)/3)), 
+              check_duplicates = F,  
+              verbose=F, max_iter = 500)
+res1 = tsne$Y
+res1 = data.frame(res1, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = gtex.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(a) t-SNE
+</td>
+
+<td align="center" valign="center">
+```{r}
+umap_res <- umap(as.matrix(sn.g.df[,-20243]), n_components = 3, y = sn.g.df[,20243], target_weight = 0.5)
+# umap_res <- umap(as.matrix(sn.g.df[,-20243]), n_components = 3)
+res1 = data.frame(umap_res, class)
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+ 
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+                  col = gtex.palette[1:nlevels(class)][as.numeric(class)]))
+rglwidget()
+```
+<br />
+(b) UMAP
+</td>
+</tr>
+
+
+<!-- ### Stars with OLDA -->
+<!-- ```{r} -->
+<!-- out2 = do.olda(as.matrix(sn.g.df[,-20243]), ndim = 4, class) -->
+<!-- rna.olda = data.frame(out2$Y,class) -->
+<!-- stars(rna.olda[,-5], rna.olda$class, col.palette = script.palette) -->
+<!-- ``` -->
+
+<!-- ### Stars with ULDA -->
+<!-- ```{r} -->
+<!-- out2 = do.ulda(as.matrix(sn.g.df[,-20243]), ndim = 4, class) -->
+<!-- rna.ulda = data.frame(out2$Y,class) -->
+<!-- stars(rna.ulda[,-5], rna.ulda$class, col.palette = script.palette) -->
+<!-- ``` -->
+
+<tr>
+<td align="center" valign="center">
+
+```{r}
+load("datasets/gtexdf.rda")
+res1 = viz2d_3d(sndf[, -ncol(sndf)])
+res1 = data.frame(res1, as.factor(sndf[, ncol(sndf)]))
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+with(res1, plot3d(x,y,z, type="s",size = 0.75,
+                  col = gtex.palette[1:nlevels(class)][as.numeric(class)]))
+# add legend
+# legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
+#          pch = 16, col = df.palette[1:nlevels(res1$class)],
+#          cex=1, inset=c(0.05))
+rglwidget()
+
+```
+<br />
+(c) Viz3D
+</td>
+
+<td align="center" valign="center">
+```{r}
+load("datasets/gtexdf.rda")
+radialvis3d(data = sndf[, -ncol(sndf)], cl = as.factor(sndf[,ncol(sndf)]), domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = gtex.palette, class.labels = c("Breast", "Colon", "Esophagus", "Liver", "Lung", "Prostate", "Stomach", "Thyrioid"))
+# rgl::par3d(windowRect = c(0, 0, 1200, 1200))
+# rgl::par3d(viewport = c(0,0,1200, 1200))
+# legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
+rgl::rgl.viewpoint(zoom = 0.6)
+rgl::rglwidget()
+```
+<br />
+(d) RadViz3D
+</td>
+</tr>
+</table>
+
+
+
+
+
+
+
+
+
+

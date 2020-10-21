@@ -1,0 +1,15 @@
+name: RadViz3DExperiments
+output_dir: "docs"
+navbar:
+  title: "RadViz3D Experiments"
+  left:
+    - text: "Description"
+      href: index.html
+    - text: "Visulizations"
+      href: supplemental_materials.html
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    theme: cosmo

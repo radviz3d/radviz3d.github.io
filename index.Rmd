@@ -1,0 +1,5 @@
+---
+title: "Description"
+---
+
+This site hosts the experiments comparing the RadViz3D methods with other methods.
