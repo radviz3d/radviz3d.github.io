@@ -591,13 +591,12 @@ rgl::rglwidget()
 
 <td align="center" valign="center">
 ```{r}
-load('datasets-gdt/just_normal.Rda')
-sn.df <- simd_normal_class
-class <- as.factor(sn.df$class)
-sn <- sn.df[,-1]
-sn.df <- data.frame(sn,class)
+load('datasets-gdt/suicide_preprocess.rda')
+sn.df <- suicide_id_normal
+class <- as.factor(class)
+sn.df <- data.frame(sn.df,class)
 set.seed(1)
-tsne <- Rtsne(as.matrix(sn.df[,-157]), dims = 3, 
+tsne <- Rtsne(as.matrix(sn.df[,-ncol(sn.df)]), dims = 3, 
               perplexity=min(500,floor((nrow(sn.df)-1)/3)), 
               check_duplicates = F,  
               verbose=F, max_iter = 500)
@@ -621,7 +620,7 @@ rglwidget()
 
 ```{r}
 set.seed(1)
-umap_res <- umap(as.matrix(sn.df[,-157]), n_components =  3, y = sn.df[,157])
+umap_res <- umap(as.matrix(sn.df[,-ncol(sn.df)]), n_components =  3, y = sn.df[,ncol(sn.df)])
 res1 = data.frame(umap_res, class)
 colnames(res1) = c("x","y","z","class")
 # open 3d window
@@ -638,32 +637,32 @@ rglwidget()
 </td>
 </tr>
 
+<!-- <tr> -->
+<!-- <td align="center" valign="center"> -->
+<!-- ```{r} -->
+<!-- out2 = do.olda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class) -->
+<!-- suicide.olda = data.frame(out2$Y,class) -->
+<!-- stars(suicide.olda[,-5], suicide.olda$class, col.palette = df.palette) -->
+<!-- ``` -->
+<!-- <br /> -->
+<!-- (c) Stars with OLDA -->
+<!-- </td> -->
+
+<!-- <td align="center" valign="center"> -->
+<!-- ```{r} -->
+<!-- out2 = do.ulda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class) -->
+<!-- suicide.ulda = data.frame(out2$Y,class) -->
+<!-- stars(suicide.ulda[,-5], suicide.ulda$class, col.palette = df.palette) -->
+<!-- ``` -->
+<!-- <br /> -->
+<!-- (d) Stars with ULDA -->
+<!-- </td> -->
+<!-- </tr> -->
+
 <tr>
 <td align="center" valign="center">
 ```{r}
-out2 = do.olda(as.matrix(sn.df[,-157]), ndim = 4, class)
-suicide.olda = data.frame(out2$Y,class)
-stars(suicide.olda[,-5], suicide.olda$class, col.palette = df.palette)
-```
-<br />
-(c) Stars with OLDA
-</td>
-
-<td align="center" valign="center">
-```{r}
-out2 = do.ulda(as.matrix(sn.df[,-157]), ndim = 4, class)
-suicide.ulda = data.frame(out2$Y,class)
-stars(suicide.ulda[,-5], suicide.ulda$class, col.palette = df.palette)
-```
-<br />
-(d) Stars with ULDA
-</td>
-</tr>
-
-<tr>
-<td align="center" valign="center">
-```{r}
-load("datasets/justdf.rda")
+sndf <- data.frame(suicide_prep, class)
 res1 = viz2d_3d(sndf[, -ncol(sndf)])
 res1 = data.frame(res1, as.factor(sndf[, ncol(sndf)]))
 colnames(res1) = c("x","y","z","class")
@@ -681,14 +680,15 @@ rglwidget()
 
 ```
 <br />
-(e) Viz3D
+(c) Viz3D
 </td>
 
 
 <td align="center" valign="center">
 ```{r}
-load("datasets/justdf.rda")
-radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = df.palette, class.labels = c("Non-suicical controls", "Suicidal attempters", "Suicical non-attempters"))
+# radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = df.palette, class.labels = c("Non-suicical controls", "Suicidal attempters", "Suicical non-attempters"))
+
+radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = df.palette)
 # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
 # rgl::par3d(viewport = c(0,0,1200, 1200))
 # legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
@@ -696,7 +696,7 @@ rgl::rgl.viewpoint(zoom = 0.6)
 rgl::rglwidget()
 ```
 <br />
-(f) RadViz3D
+(d) RadViz3D
 </td>
 </tr>
 </table>
