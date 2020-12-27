@@ -75,6 +75,17 @@ for (i in 1:length(omegas)){
   sim_data[[i]] <- sn.df
 }
 
+convert_to_discrete <- function(data, discrete_p = 1:50){
+  n <- nrow(data)
+  data[,discrete_p] <- apply(data[,discrete_p], MARGIN = 2, FUN = function(x) floor(order(x)/(n+1)*10))
+  return(data)
+}
+
+
+for (i in 1:5){
+  sim_data[[i]] <- convert_to_discrete(sim_data[[i]])
+}
+
 
 ```
 
@@ -84,11 +95,12 @@ for (i in 1:length(omegas)){
 
 
 ```{r}
+set.seed(2020)
 res_umap_supervised <- list()
 for (i in 1:length(omegas)){
   sn.df <- sim_data[[i]]
   class <- sn.df[,ncol(sn.df)]
-  umap_res <- umap(as.matrix(sn.df[,-ncol(sn.df)]), n_components = 3, y = sn.df[,ncol(sn.df)], target_weight = 0)
+  umap_res <- umap(as.matrix(sn.df[,-ncol(sn.df)]), n_components = 3, y = sn.df[,ncol(sn.df)], target_weight = 0.5)
   # umap_res <- umap(as.matrix(sn.g.df[,-20243]), n_components = 3)
   res1 = data.frame(umap_res, class)
   colnames(res1) = c("x","y","z","class")
@@ -104,9 +116,10 @@ for (i in 1:length(omegas)){
 
 
 res_radviz <- list()
+set.seed(2015)
 for (i in 1:length(omegas)){
   sn.df <- sim_data[[i]]
-  radialvis3d(data = sn.df[,-ncol(sn.df)], cl = as.factor(sn.df[,ncol(sn.df)]), domrp = T, doGtrans = T, lwd = 2, alpha = 0.35, pradius = 0.01, color = brewer.pal(5, "Paired"), message = F)
+  radialvis3d(data = sn.df[,-ncol(sn.df)], cl = as.factor(sn.df[,ncol(sn.df)]), domrp = T, doGtrans = T, lwd = 2, alpha = 0.35, pradius = 0.02, color = brewer.pal(5, "Paired"), message = F)
   # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
   # rgl::par3d(viewport = c(0,0,1200, 1200))
   # legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
@@ -329,7 +342,7 @@ rglwidget()
 
 <td align="center" valign="center">
 ```{r}
-radialvis3d(data = sndf[,-ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = df.palette)
+radialvis3d(data = sndf[,-ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.02, color = df.palette)
 # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
 # rgl::par3d(viewport = c(0,0,1200, 1200))
 rgl::rgl.viewpoint(zoom = 0.6)
@@ -449,7 +462,7 @@ rglwidget()
 <td align="center" valign="center">
 ```{r}
 load("datasets/zipdf.rda")
-radialvis3d(data = zipdigit[, -ncol(zipdigit)], cl = zipdigit[,ncol(zipdigit)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = zip.palette)
+radialvis3d(data = zipdigit[, -ncol(zipdigit)], cl = zipdigit[,ncol(zipdigit)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.02, color = zip.palette)
 # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
 # rgl::par3d(viewport = c(0,0,1200, 1200))
 rgl::rgl.viewpoint(zoom = 0.6)
@@ -571,7 +584,7 @@ rglwidget()
 
 ```{r}
 load("datasets/facedf.rda")
-radialvis3d(data = facedf[, -ncol(facedf)], cl = facedf[,ncol(facedf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = df.palette, class.labels = c("A", "B", "C", "D", "E", "F"))
+radialvis3d(data = facedf[, -ncol(facedf)], cl = facedf[,ncol(facedf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.02, color = df.palette, class.labels = c("A", "B", "C", "D", "E", "F"))
 # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
 # rgl::par3d(viewport = c(0,0,1200, 1200))
 # legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
@@ -688,7 +701,7 @@ rglwidget()
 ```{r}
 # radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = df.palette, class.labels = c("Non-suicical controls", "Suicidal attempters", "Suicical non-attempters"))
 
-radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = df.palette)
+radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.02, color = df.palette)
 # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
 # rgl::par3d(viewport = c(0,0,1200, 1200))
 # legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
@@ -807,7 +820,7 @@ rglwidget()
 <td align="center" valign="center">
 ```{r}
 load("datasets/senatordf.rda")
-radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = senator.palette, class.labels = c("Democratic", "Republican"))
+radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.02, color = senator.palette, class.labels = c("Democratic", "Republican"))
 # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
 # rgl::par3d(viewport = c(0,0,1200, 1200))
 rgl::rgl.viewpoint(zoom = 0.6)
@@ -925,7 +938,7 @@ rglwidget()
 <td align="center" valign="center">
 ```{r}
 load("datasets/autismdf.rda")
-radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = senator.palette, class.labels = c("Normal", "ASD subject"))
+radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.02, color = senator.palette, class.labels = c("Normal", "ASD subject"))
 # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
 # rgl::par3d(viewport = c(0,0,1200, 1200))
 # legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
@@ -1041,7 +1054,7 @@ rglwidget()
 <td align="center" valign="center">
 ```{r}
 load("datasets/spectdf.rda")
-radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = senator.palette, class.labels = c("Normal", "Abnormal"))
+radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.02, color = senator.palette, class.labels = c("Normal", "Abnormal"))
 # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
 # rgl::par3d(viewport = c(0,0,1200, 1200))
 # legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
@@ -1162,7 +1175,7 @@ rglwidget()
 <td align="center" valign="center">
 ```{r}
 load("datasets/scriptdf.rda")
-radialvis3d(data = scriptdf[, -ncol(scriptdf)], cl = scriptdf[,ncol(scriptdf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = script.palette, class.labels = c("Bangla", "Gujarati", "Gurmukhi", "Kannada", "Malayalam", "Urdu"))
+radialvis3d(data = scriptdf[, -ncol(scriptdf)], cl = scriptdf[,ncol(scriptdf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.02, color = script.palette, class.labels = c("Bangla", "Gujarati", "Gurmukhi", "Kannada", "Malayalam", "Urdu"))
 # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
 # rgl::par3d(viewport = c(0,0,1200, 1200))
 # legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
@@ -1274,7 +1287,7 @@ rglwidget()
 <td align="center" valign="center">
 ```{r}
 load("datasets/gtexdf.rda")
-radialvis3d(data = sndf[, -ncol(sndf)], cl = as.factor(sndf[,ncol(sndf)]), domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = gtex.palette, class.labels = c("Breast", "Colon", "Esophagus", "Liver", "Lung", "Prostate", "Stomach", "Thyrioid"))
+radialvis3d(data = sndf[, -ncol(sndf)], cl = as.factor(sndf[,ncol(sndf)]), domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.02, color = gtex.palette, class.labels = c("Breast", "Colon", "Esophagus", "Liver", "Lung", "Prostate", "Stomach", "Thyrioid"))
 # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
 # rgl::par3d(viewport = c(0,0,1200, 1200))
 # legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
