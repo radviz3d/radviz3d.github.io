@@ -5,7 +5,7 @@ navbar:
   left:
     - text: "Description"
       href: index.html
-    - text: "Visulizations"
+    - text: "Visualizations"
       href: supplemental_materials.html
 output:
   html_document:

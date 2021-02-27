@@ -53,7 +53,7 @@ library(uwot)
 library(RColorBrewer)
 
 ```
-# Simuated Datasets
+# Simulated Datasets
 
 ## Overlap of simulated groups
 ```{r echo=F}
