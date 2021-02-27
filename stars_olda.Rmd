@@ -1,0 +1,135 @@
+---
+title: "Stars with OLDA"
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, error = FALSE)
+```
+
+```{r}
+source("stars.R")
+
+viz2d_3d <- function(x, angles =  2*pi*(0:(ncol(x)-1))/ncol(x)) {
+  y <- apply(X = x, MARGIN = 2, FUN = function(z)((z - min(z))/(max(z) - min(z))))
+  sy <- rowSums(y)/ncol(y)
+  y <- apply(X = y, MARGIN = 1, FUN = function(z)(z/sum(z)))
+  y <- t(y)
+  pr <- cbind(cos(angles), sin(angles))
+  xproj <- cbind(y %*% pr, sy)
+}
+
+# {viz3d} function based on Artero and Oliveira's paper.
+viz3d <- function(x, angles =  2*pi*(0:(ncol(x)-1))/ncol(x)) {
+  y <- apply(X = x, MARGIN = 2, FUN = function(z)((z - min(z))/(max(z) - min(z))))
+  #    x <- apply(X = y, MARGIN = 1, FUN = function(z)(z/sum(z)))
+  #    x <- t(x)
+  pr <- cbind(cos(angles), sin(angles), 1)
+  xproj <- y %*% pr / ncol(y)
+}
+
+# color palette
+load("colpal.rda")
+dk.palette = senator.palette = c(rgb(red = 173, green = 216, blue = 230, max = 255), rgb(max = 255, red = 139, green = 0, blue = 0))
+
+library(MixSim)
+library(MASS)
+library(expm)
+library(grDevices)
+library(freqparcoord)
+library(Rtsne)
+library(Rdimtools)
+library(radviz3d)
+library(rgl)
+library(uwot)
+library(RColorBrewer)
+
+```
+
+<table width="500" border="0" cellpadding="0">
+<tr>
+<td align="center" valign="center">
+```{r}
+load("datasets/sim_data.rda")
+# stars with olda
+sn.df <- sim_data[[1]]
+class <- sn.df[,ncol(sn.df)]
+out2 = do.olda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
+sim.olda = data.frame(out2$Y,class)
+stars(sim.olda[,-5], sim.olda$class, col.palette = brewer.pal(5, "Paired"))
+```
+<br />
+(i) Stars with OLDA, omega = 0.0001
+</td>
+
+</tr>
+<tr>
+<td align="center" valign="center">
+```{r}
+# stars with olda
+sn.df <- sim_data[[2]]
+class <- sn.df[,ncol(sn.df)]
+out2 = do.olda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
+sim.olda = data.frame(out2$Y,class)
+stars(sim.olda[,-5], sim.olda$class, col.palette = brewer.pal(5, "Paired"))
+```
+<br />
+(ii) Stars with OLDA, omega = 0.001
+</td>
+
+</tr>
+<tr>
+<td align="center" valign="center">
+```{r}
+# stars with olda
+sn.df <- sim_data[[3]]
+class <- sn.df[,ncol(sn.df)]
+out2 = do.olda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
+sim.olda = data.frame(out2$Y,class)
+stars(sim.olda[,-5], sim.olda$class, col.palette = brewer.pal(5, "Paired"))
+```
+<br />
+(iii) Stars with OLDA, omega = 0.01
+</td>
+
+</tr>
+<tr>
+<td align="center" valign="center">
+```{r}
+# stars with olda
+sn.df <- sim_data[[4]]
+class <- sn.df[,ncol(sn.df)]
+out2 = do.olda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
+sim.olda = data.frame(out2$Y,class)
+stars(sim.olda[,-5], sim.olda$class, col.palette = brewer.pal(5, "Paired"))
+```
+<br />
+(iv) Stars with OLDA, omega = 0.05
+</td>
+
+</tr>
+<tr>
+<td align="center" valign="center">
+```{r}
+# stars with olda
+sn.df <- sim_data[[5]]
+class <- sn.df[,ncol(sn.df)]
+out2 = do.olda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
+sim.olda = data.frame(out2$Y,class)
+stars(sim.olda[,-5], sim.olda$class, col.palette = brewer.pal(5, "Paired"))
+```
+<br />
+(v) Stars with OLDA, omega = 0.25
+</td>
+
+</tr>
+
+</table>

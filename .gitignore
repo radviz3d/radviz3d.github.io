@@ -11,3 +11,9 @@ datasets-gdt
 docs/datasets
 docs/datasets-gdt
 docs/README.html
+
+supplemental_materials_cache
+supplemental_materials_files
+tsne_cache
+umap_cache
+
