@@ -181,8 +181,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = df.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -199,8 +200,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = df.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 
 ```
@@ -245,8 +247,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75,
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75,
                   col = df.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 # add legend
 # legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
 #          pch = 16, col = df.palette[1:nlevels(res1$class)],
@@ -297,8 +300,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = zip.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -316,8 +320,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = zip.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -364,8 +369,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75,
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75,
                   col = zip.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 # add legend
 # legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
 #          pch = 16, col = df.palette[1:nlevels(res1$class)],
@@ -421,8 +427,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = df.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -441,8 +448,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = df.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -485,8 +493,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75,
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75,
                   col = df.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 # add legend
 # legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
 #          pch = 16, col = df.palette[1:nlevels(res1$class)],
@@ -539,8 +548,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = df.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -559,8 +569,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = df.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -601,8 +612,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75,
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75,
                   col = df.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 # add legend
 # legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
 #          pch = 16, col = df.palette[1:nlevels(res1$class)],
@@ -659,8 +671,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F,x,y,z, type="s",size = 0.75, 
                   col = dk.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -679,8 +692,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = dk.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -722,8 +736,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75,
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75,
                   col = senator.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 # add legend
 # legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
 #          pch = 16, col = df.palette[1:nlevels(res1$class)],
@@ -777,8 +792,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = dk.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -798,8 +814,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = dk.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -840,8 +857,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75,
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75,
                   col = senator.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 # add legend
 # legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
 #          pch = 16, col = df.palette[1:nlevels(res1$class)],
@@ -894,8 +912,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = dk.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -913,8 +932,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = dk.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -955,8 +975,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75,
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75,
                   col = senator.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 # add legend
 # legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
 #          pch = 16, col = df.palette[1:nlevels(res1$class)],
@@ -1015,8 +1036,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = script.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -1033,8 +1055,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = script.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -1075,8 +1098,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75,
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75,
                   col = script.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 # add legend
 # legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
 #          pch = 16, col = df.palette[1:nlevels(res1$class)],
@@ -1134,8 +1158,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = gtex.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -1153,8 +1178,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                   col = gtex.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 rglwidget()
 ```
 <br />
@@ -1189,8 +1215,9 @@ colnames(res1) = c("x","y","z","class")
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-with(res1, plot3d(x,y,z, type="s",size = 0.75,
+with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75,
                   col = gtex.palette[1:nlevels(class)][as.numeric(class)]))
+box3d()
 # add legend
 # legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
 #          pch = 16, col = df.palette[1:nlevels(res1$class)],

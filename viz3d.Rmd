@@ -72,8 +72,9 @@ for (i in 1:length(omegas)){
   # resize window
   par3d(windowRect = c(100, 100, 612, 612))
   # plot
-  with(res1, plot3d(x,y,z, type="s",size = 0.75, 
+  with(res1, plot3d(axes = F, x,y,z, type="s",size = 0.75, 
                     col = brewer.pal(5,"Paired")[as.numeric(class)]))
+  box3d()
   res_viz3d[[i]] <- rglwidget()
 }
 ```
