@@ -55,13 +55,23 @@ library(RColorBrewer)
 ```
 
 
-```{r}
+```{r, eval = F}
 load("datasets/sim_data.rda")
 res_radviz <- list()
 set.seed(2015)
+sim_data_gdt <- NULL
 for (i in 1:length(omegas)){
   sn.df <- sim_data[[i]]
-  radialvis3d(data = sn.df[,-ncol(sn.df)], cl = as.factor(sn.df[,ncol(sn.df)]), domrp = T, doGtrans = T, lwd = 2, alpha = 0.35, pradius = 0.02, color = brewer.pal(5, "Paired"), message = F)
+  sim_data_gdt[[i]] <- data.frame(Gtrans(data = sn.df[,-ncol(sn.df)]), class = sn.df[,ncol(sn.df)])
+}
+
+save(sim_data_gdt, file = "sim_data_gdt.rda")
+```
+```{r}
+load("sim_data_gdt.rda")
+for (i in 1:length(omegas)){
+  sn.df <- sim_data_gdt[[i]]
+  radialvis3d(data = sn.df[,-ncol(sn.df)], cl = as.factor(sn.df[,ncol(sn.df)]), domrp = T, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.02, color = brewer.pal(5, "Paired"), message = F)
   # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
   # rgl::par3d(viewport = c(0,0,1200, 1200))
   # legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
