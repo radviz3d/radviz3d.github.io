@@ -1,5 +1,5 @@
 ---
-title: "Stars with OLDA"
+title: "Star Coordinates with OLDA"
 ---
 
 <style type="text/css">
@@ -59,15 +59,17 @@ library(RColorBrewer)
 <td align="center" valign="center">
 ```{r}
 load("datasets/sim_data.rda")
-# stars with olda
+sim_pal <- c("#1F78B4","#6A3D9A", "#33A02C","#E31A1C", "yellow")
+
+# Star Coordinates with olda
 sn.df <- sim_data[[1]]
 class <- sn.df[,ncol(sn.df)]
 out2 = do.olda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
 sim.olda = data.frame(out2$Y,class)
-stars(sim.olda[,-5], sim.olda$class, col.palette = brewer.pal(5, "Paired"))
+stars(sim.olda[,-5], sim.olda$class, col.palette = sim_pal)
 ```
 <br />
-(i) Stars with OLDA, omega = 0.0001
+(i) Star Coordinates with OLDA, omega = 0.0001
 </td>
 
 </tr>
@@ -79,10 +81,10 @@ sn.df <- sim_data[[2]]
 class <- sn.df[,ncol(sn.df)]
 out2 = do.olda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
 sim.olda = data.frame(out2$Y,class)
-stars(sim.olda[,-5], sim.olda$class, col.palette = brewer.pal(5, "Paired"))
+stars(sim.olda[,-5], sim.olda$class, col.palette = sim_pal)
 ```
 <br />
-(ii) Stars with OLDA, omega = 0.001
+(ii) Star Coordinates with OLDA, omega = 0.001
 </td>
 
 </tr>
@@ -94,10 +96,10 @@ sn.df <- sim_data[[3]]
 class <- sn.df[,ncol(sn.df)]
 out2 = do.olda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
 sim.olda = data.frame(out2$Y,class)
-stars(sim.olda[,-5], sim.olda$class, col.palette = brewer.pal(5, "Paired"))
+stars(sim.olda[,-5], sim.olda$class, col.palette = sim_pal)
 ```
 <br />
-(iii) Stars with OLDA, omega = 0.01
+(iii) Star Coordinates with OLDA, omega = 0.01
 </td>
 
 </tr>
@@ -109,10 +111,10 @@ sn.df <- sim_data[[4]]
 class <- sn.df[,ncol(sn.df)]
 out2 = do.olda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
 sim.olda = data.frame(out2$Y,class)
-stars(sim.olda[,-5], sim.olda$class, col.palette = brewer.pal(5, "Paired"))
+stars(sim.olda[,-5], sim.olda$class, col.palette = sim_pal)
 ```
 <br />
-(iv) Stars with OLDA, omega = 0.05
+(iv) Star Coordinates with OLDA, omega = 0.05
 </td>
 
 </tr>
@@ -124,10 +126,10 @@ sn.df <- sim_data[[5]]
 class <- sn.df[,ncol(sn.df)]
 out2 = do.olda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
 sim.olda = data.frame(out2$Y,class)
-stars(sim.olda[,-5], sim.olda$class, col.palette = brewer.pal(5, "Paired"))
+stars(sim.olda[,-5], sim.olda$class, col.palette = sim_pal)
 ```
 <br />
-(v) Stars with OLDA, omega = 0.25
+(v) Star Coordinates with OLDA, omega = 0.25
 </td>
 
 </tr>

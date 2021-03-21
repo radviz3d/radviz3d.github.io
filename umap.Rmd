@@ -56,6 +56,7 @@ library(RColorBrewer)
 
 ```{r}
 load("datasets/sim_data.rda")
+sim_pal <- c("#1F78B4","#6A3D9A", "#33A02C","#E31A1C", "yellow")
 set.seed(2020)
 res_umap_supervised <- list()
 for (i in 1:length(omegas)){
@@ -71,7 +72,7 @@ for (i in 1:length(omegas)){
   par3d(windowRect = c(100, 100, 612, 612))
   # plot
   with(res1, plot3d(xlab="", ylab="", zlab="", axes = F, x,y,z, type="s",size = 0.75, 
-                    col = brewer.pal(5,"Paired")[as.numeric(class)]))
+                    col = sim_pal[as.numeric(class)]))
   box3d()
   res_umap_supervised[[i]] <- rglwidget()
 }

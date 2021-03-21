@@ -69,7 +69,7 @@ set.seed(2020)
 for (i in 1:length(omegas)){
   p = 100
   Q <- MixGOM(goMega = omegas[i], K = 5, p = p, sph = T, hom = T)
-  print(overlap(Q$Pi, Q$Mu, Q$S)$OmegaMap)
+  print(t(overlap(Q$Pi, Q$Mu, Q$S)$OmegaMap) + overlap(Q$Pi, Q$Mu, Q$S)$OmegaMap - diag(5))
   A <- simdataset(n = 500, Pi = Q$Pi, Mu = Q$Mu, S = Q$S)
   sn <- A$X
   # colnames(sn) <- paste(1:4)
@@ -99,8 +99,8 @@ save(sim_data, file = "datasets/sim_data.rda")
 
 (a) [t-SNE](tsne.html)
 (b) [UMAP](umap.html)
-(c) [Stars with OLDA](stars_olda.html)
-(d) [Stars with ULDA](stars_ulda.html)
+(c) [Star Coordinates with OLDA](stars_olda.html)
+(d) [Star Coordinates with ULDA](stars_ulda.html)
 (e) [Viz3D](viz3d.html)
 (f) [RadViz3D](radviz3d.html)
 
@@ -220,7 +220,7 @@ grb.olda = data.frame(out2$Y,class)
 stars(grb.olda[,-5], grb.olda$class, col.palette = df.palette)
 ```
 <br />
-(c) Stars with OLDA
+(c) Star Coordinates with OLDA
 </td>
 
 <td align="center" valign="center">
@@ -231,7 +231,7 @@ grb.ulda = data.frame(out2$Y,class)
 stars(grb.ulda[,-5], grb.ulda$class, col.palette = df.palette)
 ```
 <br />
-(d) Stars with ULDA
+(d) Star Coordinates with ULDA
 </td>
 </tr>
 
@@ -341,7 +341,7 @@ zip.olda = data.frame(out2$Y,class)
 stars(zip.olda[,-5], zip.olda$class, col.palette = zip.palette)
 ```
 <br />
-(c) Stars with OLDA
+(c) Star Coordinates with OLDA
 </td>
 
 <td align="center" valign="center">
@@ -353,7 +353,7 @@ zip.ulda = data.frame(out2$Y,class)
 stars(zip.ulda[,-5], zip.ulda$class, col.palette = zip.palette)
 ```
 <br />
-(d) Stars with ULDA
+(d) Star Coordinates with ULDA
 </td>
 </tr>
 
@@ -466,7 +466,7 @@ face.olda = data.frame(out2$Y,class)
 stars(face.olda[,-5], face.olda$class, col.palette = df.palette)
 ```
 <br />
-(c) Stars with OLDA
+(c) Star Coordinates with OLDA
 </td>
 
 <td align="center" valign="center">
@@ -476,7 +476,7 @@ face.ulda = data.frame(out2$Y,class)
 stars(face.ulda[,-5], face.ulda$class, col.palette = df.palette)
 ```
 <br />
-(d) Stars with ULDA
+(d) Star Coordinates with ULDA
 </td>
 </tr>
 
@@ -587,7 +587,7 @@ rglwidget()
 <!-- stars(suicide.olda[,-5], suicide.olda$class, col.palette = df.palette) -->
 <!-- ``` -->
 <!-- <br /> -->
-<!-- (c) Stars with OLDA -->
+<!-- (c) Star Coordinates with OLDA -->
 <!-- </td> -->
 
 <!-- <td align="center" valign="center"> -->
@@ -597,7 +597,7 @@ rglwidget()
 <!-- stars(suicide.ulda[,-5], suicide.ulda$class, col.palette = df.palette) -->
 <!-- ``` -->
 <!-- <br /> -->
-<!-- (d) Stars with ULDA -->
+<!-- (d) Star Coordinates with ULDA -->
 <!-- </td> -->
 <!-- </tr> -->
 
@@ -710,7 +710,7 @@ senator.olda = data.frame(out2$Y,class)
 stars(senator.olda[,-4], senator.olda$class, col.palette = dk.palette)
 ```
 <br />
-(c) Stars with OLDA
+(c) Star Coordinates with OLDA
 </td>
 
 <td align="center" valign="center">
@@ -720,7 +720,7 @@ senator.ulda = data.frame(out2$Y,class)
 stars(senator.ulda[,-4], senator.ulda$class, col.palette = dk.palette)
 ```
 <br />
-(d) Stars with ULDA
+(d) Star Coordinates with ULDA
 </td>
 </tr>
 
@@ -832,7 +832,7 @@ autism.olda = data.frame(out2$Y,class)
 stars(autism.olda[,-4], autism.olda$class, col.palette = dk.palette)
 ```
 <br />
-(c) Stars with OLDA
+(c) Star Coordinates with OLDA
 </td>
 
 <td align="center" valign="center">
@@ -842,7 +842,7 @@ autism.ulda = data.frame(out2$Y,class)
 stars(autism.ulda[,-4], autism.ulda$class, col.palette = dk.palette)
 ```
 <br />
-(d) Stars with ULDA
+(d) Star Coordinates with ULDA
 </td>
 </tr>
 
@@ -950,7 +950,7 @@ spect.olda = data.frame(out2$Y,class)
 stars(spect.olda[,-4], spect.olda$class, col.palette = dk.palette)
 ```
 <br />
-(c) Stars with OLDA
+(c) Star Coordinates with OLDA
 </td>
 
 <td align="center" valign="center">
@@ -960,7 +960,7 @@ spect.ulda = data.frame(out2$Y,class)
 stars(spect.ulda[,-4], spect.ulda$class, col.palette = dk.palette)
 ```
 <br />
-(d) Stars with ULDA
+(d) Star Coordinates with ULDA
 </td>
 </tr>
 
@@ -1073,7 +1073,7 @@ script.olda = data.frame(out2$Y,class)
 stars(script.olda[,-5], script.olda$class, col.palette = script.palette)
 ```
 <br />
-(c) Stars with OLDA
+(c) Star Coordinates with OLDA
 </td>
 
 <td align="center" valign="center">
@@ -1083,7 +1083,7 @@ script.ulda = data.frame(out2$Y,class)
 stars(script.ulda[,-5], script.ulda$class, col.palette = script.palette)
 ```
 <br />
-(d) Stars with ULDA
+(d) Star Coordinates with ULDA
 </td>
 </tr>
 
@@ -1189,14 +1189,14 @@ rglwidget()
 </tr>
 
 
-<!-- ### Stars with OLDA -->
+<!-- ### Star Coordinates with OLDA -->
 <!-- ```{r} -->
 <!-- out2 = do.olda(as.matrix(sn.g.df[,-20243]), ndim = 4, class) -->
 <!-- rna.olda = data.frame(out2$Y,class) -->
 <!-- stars(rna.olda[,-5], rna.olda$class, col.palette = script.palette) -->
 <!-- ``` -->
 
-<!-- ### Stars with ULDA -->
+<!-- ### Star Coordinates with ULDA -->
 <!-- ```{r} -->
 <!-- out2 = do.ulda(as.matrix(sn.g.df[,-20243]), ndim = 4, class) -->
 <!-- rna.ulda = data.frame(out2$Y,class) -->
