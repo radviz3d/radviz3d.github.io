@@ -39,6 +39,8 @@ viz3d <- function(x, angles =  2*pi*(0:(ncol(x)-1))/ncol(x)) {
 # color palette
 load("colpal.rda")
 dk.palette = senator.palette = c(rgb(red = 173, green = 216, blue = 230, max = 255), rgb(max = 255, red = 139, green = 0, blue = 0))
+face.palette <- gtex.palette[c(2:4, 6:8)]
+suicide.palette <- gtex.palette[c(2, 6, 4)]
 
 library(MixSim)
 library(MASS)
@@ -428,7 +430,7 @@ colnames(res1) = c("x","y","z","class")
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
 with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0.75, 
-                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+                  col = face.palette[1:nlevels(class)][as.numeric(class)]))
 box3d()
 rglwidget()
 ```
@@ -449,7 +451,7 @@ colnames(res1) = c("x","y","z","class")
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
 with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0.75, 
-                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+                  col = face.palette[1:nlevels(class)][as.numeric(class)]))
 box3d()
 rglwidget()
 ```
@@ -463,7 +465,7 @@ rglwidget()
 ```{r}
 out2 = do.olda(as.matrix(face.g.df[,-281]), ndim = 4, class)
 face.olda = data.frame(out2$Y,class)
-stars(face.olda[,-5], face.olda$class, col.palette = df.palette)
+stars(face.olda[,-5], face.olda$class, col.palette = face.palette)
 ```
 <br />
 (c) Star Coordinates with OLDA
@@ -473,7 +475,7 @@ stars(face.olda[,-5], face.olda$class, col.palette = df.palette)
 ```{r}
 out2 = do.ulda(as.matrix(face.g.df[,-281]), ndim = 4, class)
 face.ulda = data.frame(out2$Y,class)
-stars(face.ulda[,-5], face.ulda$class, col.palette = df.palette)
+stars(face.ulda[,-5], face.ulda$class, col.palette = face.palette)
 ```
 <br />
 (d) Star Coordinates with ULDA
@@ -494,7 +496,7 @@ colnames(res1) = c("x","y","z","class")
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
 with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0.75,
-                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+                  col = face.palette[1:nlevels(class)][as.numeric(class)]))
 box3d()
 # add legend
 # legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
@@ -511,7 +513,7 @@ rglwidget()
 
 ```{r}
 load("datasets/facedf.rda")
-radialvis3d(data = facedf[, -ncol(facedf)], cl = facedf[,ncol(facedf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.02, color = df.palette, class.labels = c("A", "B", "C", "D", "E", "F"))
+radialvis3d(data = facedf[, -ncol(facedf)], cl = facedf[,ncol(facedf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.02, color = face.palette, class.labels = c("A", "B", "C", "D", "E", "F"))
 # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
 # rgl::par3d(viewport = c(0,0,1200, 1200))
 # legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
@@ -549,7 +551,7 @@ colnames(res1) = c("x","y","z","class")
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
 with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0.75, 
-                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+                  col = suicide.palette[1:nlevels(class)][as.numeric(class)]))
 box3d()
 rglwidget()
 ```
@@ -570,7 +572,7 @@ colnames(res1) = c("x","y","z","class")
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
 with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0.75, 
-                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+                  col = suicide.palette[1:nlevels(class)][as.numeric(class)]))
 box3d()
 rglwidget()
 ```
@@ -613,7 +615,7 @@ colnames(res1) = c("x","y","z","class")
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
 with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0.75,
-                  col = df.palette[1:nlevels(class)][as.numeric(class)]))
+                  col = suicide.palette[1:nlevels(class)][as.numeric(class)]))
 box3d()
 # add legend
 # legend3d("topright", legend = paste('Group',1:nlevels(res1$class)),
@@ -631,7 +633,7 @@ rglwidget()
 ```{r}
 # radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.01, color = df.palette, class.labels = c("Non-suicical controls", "Suicidal attempters", "Suicical non-attempters"))
 
-radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.02, color = df.palette)
+radialvis3d(data = sndf[, -ncol(sndf)], cl = sndf[,ncol(sndf)], domrp = F, doGtrans = F, lwd = 2, alpha = 0.35, pradius = 0.02, color = suicide.palette, coord.labels = c("X1", "X2", "X3", "X4"))
 # rgl::par3d(windowRect = c(0, 0, 1200, 1200))
 # rgl::par3d(viewport = c(0,0,1200, 1200))
 # legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01))
