@@ -55,12 +55,12 @@ library(RColorBrewer)
 ```
 
 ```{r}
-load("datasets/sim_data.rda")
+load("sim_data_gdt.rda")
 set.seed(2020)
 sim_pal <- c("#1F78B4","#6A3D9A", "#33A02C","#E31A1C", "yellow")
 res_tsne <- list()
 for (i in 1:length(omegas)){
-  sn.df <- sim_data[[i]]
+  sn.df <- sim_data_gdt[[i]]
   class <- sn.df[,ncol(sn.df)]
   tsne_res <- Rtsne(as.matrix(sn.df[,-ncol(sn.df)]), dims = 3,
                     perplexity = min(500, floor((nrow(sn.df) -1)/3)),

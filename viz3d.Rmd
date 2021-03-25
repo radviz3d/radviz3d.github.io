@@ -56,15 +56,15 @@ library(RColorBrewer)
 
 
 ```{r}
-load("datasets/sim_data.rda")
+load("sim_data_gdt.rda")
 sim_pal <- c("#1F78B4","#6A3D9A", "#33A02C","#E31A1C", "yellow")
 set.seed(2020)
 res_viz3d <- list()
 for (i in 1:length(omegas)){
-  sn.df <- sim_data[[i]]
+  sn.df <- sim_data_gdt[[i]]
   sn <- sn.df[,-ncol(sn.df)]
   class <- sn.df[,ncol(sn.df)]
-  sn <- mrp(Gtrans(sn), cl = class, message = F, npc = 4)$projected_df
+  sn <- mrp(sn, cl = class, message = F, npc = 4)$projected_df
   
   res1 = data.frame(viz2d_3d(sn), class)
   colnames(res1) = c("x","y","z","class")

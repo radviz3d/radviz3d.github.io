@@ -58,11 +58,11 @@ library(RColorBrewer)
 <tr>
 <td align="center" valign="center">
 ```{r}
-load("datasets/sim_data.rda")
+load("sim_data_gdt.rda")
 sim_pal <- c("#1F78B4","#6A3D9A", "#33A02C","#E31A1C", "yellow")
 
 # stars with olda
-sn.df <- sim_data[[1]]
+sn.df <- sim_data_gdt[[1]]
 class <- sn.df[,ncol(sn.df)]
 out2 = do.ulda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
 sim.ulda = data.frame(out2$Y,class)
@@ -77,7 +77,7 @@ stars(sim.ulda[,-5], sim.ulda$class, col.palette = sim_pal)
 <td align="center" valign="center">
 ```{r}
 # stars with olda
-sn.df <- sim_data[[2]]
+sn.df <- sim_data_gdt[[2]]
 class <- sn.df[,ncol(sn.df)]
 out2 = do.ulda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
 sim.ulda = data.frame(out2$Y,class)
@@ -92,7 +92,7 @@ stars(sim.ulda[,-5], sim.ulda$class, col.palette = sim_pal)
 <td align="center" valign="center">
 ```{r}
 # stars with olda
-sn.df <- sim_data[[3]]
+sn.df <- sim_data_gdt[[3]]
 class <- sn.df[,ncol(sn.df)]
 out2 = do.ulda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
 sim.ulda = data.frame(out2$Y,class)
@@ -107,7 +107,7 @@ stars(sim.ulda[,-5], sim.ulda$class, col.palette = sim_pal)
 <td align="center" valign="center">
 ```{r}
 # stars with olda
-sn.df <- sim_data[[4]]
+sn.df <- sim_data_gdt[[4]]
 class <- sn.df[,ncol(sn.df)]
 out2 = do.ulda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
 sim.ulda = data.frame(out2$Y,class)
@@ -122,7 +122,7 @@ stars(sim.ulda[,-5], sim.ulda$class, col.palette = sim_pal)
 <td align="center" valign="center">
 ```{r}
 # stars with olda
-sn.df <- sim_data[[5]]
+sn.df <- sim_data_gdt[[5]]
 class <- sn.df[,ncol(sn.df)]
 out2 = do.ulda(as.matrix(sn.df[,-ncol(sn.df)]), ndim = 4, class)
 sim.ulda = data.frame(out2$Y,class)
