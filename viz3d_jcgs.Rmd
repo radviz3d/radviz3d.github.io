@@ -1,0 +1,98 @@
+---
+title: "Viz3D"
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, error = FALSE)
+```
+
+```{r}
+library(MixSim)
+library(RColorBrewer)
+library(MASS)
+library(freqparcoord)
+library(expm)
+library(grDevices)
+library(radviz3d)
+library(rgl)
+
+viz2d_3d <- function(x, angles =  2*pi*(0:(ncol(x)-1))/ncol(x)) {
+  y <- apply(X = x, MARGIN = 2, FUN = function(z)((z - min(z))/(max(z) - min(z))))
+  sy <- rowSums(y)/ncol(y)
+  y <- apply(X = y, MARGIN = 1, FUN = function(z)(z/sum(z)))
+  y <- t(y)
+  pr <- cbind(cos(angles), sin(angles))
+  xproj <- cbind(y %*% pr, sy)
+}
+
+```
+
+
+```{r}
+set.seed(2020)
+res_viz3d <- list()
+sim.palette <- brewer.pal(8,"Dark2")[c(5,8,4,7,3)]
+load("sim_data_5.rda")
+for (i in 1:3){
+  df <- sim_data[[i]]
+  res1 = viz2d_3d(df[,-1])
+  res1 = data.frame(res1, as.factor(df$class))
+  colnames(res1) = c("x","y","z","class")
+  # open 3d window
+  # resize window
+  par3d(windowRect = c(100, 100, 612, 612))
+  # plot
+  with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0.75,
+                  col = sim.palette[1:nlevels(class)][as.numeric(class)]))
+  box3d()
+  res_viz3d[[i]] <- rglwidget()
+}
+
+```
+
+
+<table width="500" border="0" cellpadding="0">
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+res_viz3d[[1]]
+```
+(i) Viz3D, $p = 5, \ddot\omega = 0.001$
+<br />
+</td>
+
+</tr>
+</tr>
+
+<td align="center" valign="center">
+```{r}
+res_viz3d[[2]]
+```
+(ii) Viz3D, $p = 5, \ddot\omega = 0.01$
+<br />
+</td>
+
+</tr>
+</tr>
+
+<td align="center" valign="center">
+```{r}
+res_viz3d[[3]]
+```
+(iii) Viz3D, $p = 5, \ddot\omega = 0.05$
+<br />
+</td>
+
+</tr>
+</table>
