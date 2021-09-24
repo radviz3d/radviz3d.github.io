@@ -6,7 +6,7 @@ navbar:
     - text: "Description"
       href: index.html
     - text: "Visualizations"
-      href: supplemental_materials.html
+      href: supplement_jcgs.html
 output:
   html_document:
     toc: true
