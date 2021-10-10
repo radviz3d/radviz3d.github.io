@@ -18,6 +18,7 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, error = FA
 ```{r}
 library(MixSim)
 library(RColorBrewer)
+library(colorspace)
 library(MASS)
 library(freqparcoord)
 library(expm)
@@ -50,15 +51,39 @@ viz3d <- function(x, angles =  2*pi*(0:(ncol(x)-1))/ncol(x)) {
 wine.palette = brewer.pal(8,"Dark2")[c(1,2,3)]
 cb.palette = c("#A6CEE3", "#1F78B4", "#FDBF6F", "#FF7F00") 
 oil.palette = c(brewer.pal(8,"Dark2"), "cyan")
+# for ceramic sample data
+glaze = brewer.pal(12,"Paired")[c(2,4,6,10)]
+body = lighten(glaze, 0.6) # higher percetange -> ligher color
+ceramic.palette = c(body[1],glaze[1],body[2],glaze[2],
+                    body[3],glaze[3],body[4],glaze[4])
 # for SARS-COV2 data
 kols1 <- c(RColorBrewer::brewer.pal(name = "Set2", n = 8)[-1],
            RColorBrewer::brewer.pal(name = "Greens", n = 9)[7],
            RColorBrewer::brewer.pal(name = "Reds", n = 9)[7],
            RColorBrewer::brewer.pal(name = "Blues", n = 9)[7])
 kols2 <- c(RColorBrewer::brewer.pal(name = "Dark2", n = 8),
-                  RColorBrewer::brewer.pal(name = "Reds", n = 9)[8],
-                  RColorBrewer::brewer.pal(name = "Blues", n = 9)[8])
+           RColorBrewer::brewer.pal(name = "Reds", n = 9)[8],
+           RColorBrewer::brewer.pal(name = "Blues", n = 9)[8])
 kols <- kols2
+
+# dashed lines function
+rgl.dashed.lines <- function(start.pt, end.pt, dash.length, ...)
+{
+    curr.pt <- start.pt
+    direction <- (end.pt - start.pt)/sqrt(sum((end.pt - start.pt)^2))
+    next.pt  <- curr.pt + dash.length * direction
+
+    magnitude <- sqrt(sum((end.pt - start.pt)^2))
+    k <- magnitude/dash.length
+    j <- 0
+    while (j < k) {
+        j <- j + 1
+        rgl::rgl.lines(x = rbind(curr.pt,next.pt), ...)
+        curr.pt  <- next.pt + dash.length * direction
+        next.pt <- curr.pt + dash.length * direction
+        j  <- j + 1
+    }
+}
 
 ```
 
@@ -187,7 +212,7 @@ save(overlap_mat_sim, sim_data, file = "sim_data_5.rda")
 <!-- # set.seed(2015) -->
 <!-- # for (i in 1:length(omegas)){ -->
 <!-- #   sn.df <- sim_data[[i]] -->
-<!-- #   radialvis3d(data = sn.df[,-ncol(sn.df)], cl = as.factor(sn.df[,ncol(sn.df)]), domrp = T, doGtrans = T, lwd = 2, alpha = 0.325, radius = 0.02, color = brewer.pal(5, "Paired"), message = F) -->
+<!-- #   radialvis3d(data = sn.df[,-ncol(sn.df)], cl = as.factor(sn.df[,ncol(sn.df)]), domrp = T, doGtrans = T, lwd = 2, alpha = 0.325, point.cex = 0.15, color = brewer.pal(5, "Paired"), message = F) -->
 <!-- #   # rgl::par3d(windowRect = c(0, 0, 1200, 1200)) -->
 <!-- #   # rgl::par3d(viewport = c(0,0,1200, 1200)) -->
 <!-- #   # legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01)) -->
@@ -279,8 +304,8 @@ par3d(windowRect = c(100, 100, 612, 612))
 with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0.95,
                   col = wine.palette[1:nlevels(class)][as.numeric(class)]))
 box3d()
-rglwidget();rgl.close()
-
+rglwidget()
+rgl.close()
 ```
 <br />
 Viz3D
@@ -288,11 +313,11 @@ Viz3D
 
 <td align="center" valign="center">
 ```{r}
-radialvis3d(data = df[,-1], cl = factor(df$cultivar), domrp = F, doGtrans = F, lwd = 2, alpha = 0.02, radius = 0.035, 
-            color = wine.palette, coord.font = 4,coord.cex = 1.5,
-            class.labels = NULL)
+radialvis3d(data = df[,-1], cl = factor(df$cultivar), domrp = F, doGtrans = F, lwd = 2, 
+            alpha = 0.025,color = wine.palette, coord.font = 4,coord.cex = 1.5,
+            class.labels = NULL, point.cex = 0.15)
 rgl::rgl.viewpoint(zoom = 0.6)
-rgl::rglwidget();
+rgl::rglwidget()
 rgl.close()
 ```
 <br />
@@ -366,8 +391,8 @@ par3d(windowRect = c(100, 100, 612, 612))
 with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0.75,
                   col = cb.palette[1:nlevels(class)][as.numeric(class)]))
 box3d()
-rglwidget();rgl.close()
-
+rglwidget()
+rgl.close()
 ```
 <br />
 Viz3D
@@ -375,9 +400,11 @@ Viz3D
 
 <td align="center" valign="center">
 ```{r}
-radialvis3d(data = df[,-6], cl = factor(df$group), domrp = F, doGtrans = F, lwd = 2, alpha = 0.325, radius = 0.035, color = cb.palette, class.labels = NULL)
+radialvis3d(data = df[,-6], cl = factor(df$group), domrp = F, doGtrans = F, lwd = 2, 
+            alpha = 0.025, color = cb.palette, class.labels = NULL, point.cex = 0.15)
 rgl::rgl.viewpoint(zoom = 0.6)
-rgl::rglwidget();rgl.close()
+rgl::rglwidget()
+rgl.close()
 ```
 <br />
 RadViz3D
@@ -451,8 +478,8 @@ par3d(windowRect = c(100, 100, 612, 612))
 with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0.75,
                   col = cb.palette[1:nlevels(class)][as.numeric(class)]))
 box3d()
-rglwidget();rgl.close()
-
+rglwidget()
+rgl.close()
 ```
 <br />
 Viz3D
@@ -460,7 +487,8 @@ Viz3D
 
 <td align="center" valign="center">
 ```{r}
-radialvis3d(data = df[,-5], cl = factor(df$group), domrp = F, doGtrans = F, lwd = 2, alpha = 0.325, radius = 0.035, color = cb.palette, class.labels = NULL)
+radialvis3d(data = df[,-5], cl = factor(df$group), domrp = F, doGtrans = F, lwd = 2, 
+            alpha = 0.025, color = cb.palette, class.labels = NULL, point.cex = 0.15)
 rgl::rgl.viewpoint(zoom = 0.6)
 rgl::rglwidget();rgl.close()
 ```
@@ -550,8 +578,8 @@ par3d(windowRect = c(100, 100, 612, 612))
 with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0.75,
                   col = oil.palette[1:nlevels(class)][as.numeric(class)]))
 box3d()
-rglwidget();rgl.close()
-
+rglwidget()
+rgl.close()
 ```
 <br />
 Viz3D
@@ -559,10 +587,12 @@ Viz3D
 
 <td align="center" valign="center">
 ```{r}
-radialvis3d(data = df[,-1], cl = factor(df$class), domrp = F, doGtrans = F, lwd = 2, alpha = 0.325, radius = 0.035, color = oil.palette, coord.cex = 1.15,
-            class.labels = NULL)
+radialvis3d(data = df[,-1], cl = factor(df$class), domrp = F, doGtrans = F, lwd = 2, 
+            alpha = 0.025, color = oil.palette, coord.cex = 1.15,
+            class.labels = NULL, point.cex = 0.15)
 rgl::rgl.viewpoint(zoom = 0.6)
-rgl::rglwidget();rgl.close()
+rgl::rglwidget()
+rgl.close()
 ```
 <br />
 RadViz3D
@@ -658,8 +688,8 @@ par3d(windowRect = c(100, 100, 612, 612))
 with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0.75,
                   col = wine.palette[1:nlevels(class)][as.numeric(class)]))
 box3d()
-rglwidget();rgl.close()
-
+rglwidget()
+rgl.close()
 ```
 <br />
 Viz3D
@@ -667,10 +697,12 @@ Viz3D
 
 <td align="center" valign="center">
 ```{r}
-radialvis3d(data = df[,-1], cl = factor(df$class), domrp = F, doGtrans = F, lwd = 2, alpha = 0.325, radius = 0.035, color = wine.palette, coord.cex = 1.5,
+radialvis3d(data = df[,-1], cl = factor(df$class), domrp = F, doGtrans = F, lwd = 2, 
+            alpha = 0.025,  color = wine.palette, coord.cex = 1.5, point.cex = 0.15,
             class.labels = NULL)
 rgl::rgl.viewpoint(zoom = 0.6)
-rgl::rglwidget();rgl.close()
+rgl::rglwidget()
+rgl.close()
 ```
 <br />
 RadViz3D
@@ -678,26 +710,22 @@ RadViz3D
 </tr>
 </table>
 
-## Fig. S7: SARS-COV2 Dataset
+## Fig. S7: Ceramic Sample Datasets.
 ```{r}
 setwd("~/Desktop/temp/radviz3d-jcgs-codes/datasets/")
-load("SARS-CoV-2-timeG12MA.rda")
-dat.w.g12.ma$group <- factor(dat.w.g12.ma$group, 
-                             levels =c("6/19/21", "6/26/21", "7/3/21", "7/10/21", 
-                                       "7/17/21", "7/24/21", "7/31/21", "8/7/21", 
-                                       "8/14/21", "8/21/21"))
-dat.w.g12.ma$region = factor(dat.w.g12.ma$region)
-df = dat.w.g12.ma
+load("ceramic.rda")
+
 ## Use hclust to find the order of coordinates for RadViz displays
-#xx  <-  t(scale(asin(sqrt(dat.w.g12.ma[,-c(1:3,15)]))))
+#xx  <-  t(scale(asin(sqrt(df.17[,-c(1:2)]))))
 #x.hcl  <- hclust(dist(xx), method = "ward.D2")
 #plot(x.hcl)
+
 ll <- c()
-ll[5] <- 5
-ll[6] <- 4
-ll[1:4] <- c(1, 7, 2, 8)
-ll[7] <- 9
-ll[8:11] <- c(3,10,6,11)
+ll[c(4,9,1,6,3)] <- c(6, 17, 14, 9, 2)
+ll[c(2,5,7,10,8)] <- c(5, 13, 1, 10, 4)
+ll[c(13, 15, 16)] <- c(3, 15, 16)
+ll[c(12, 17)] <- c(7,8)
+ll[c(11,14)] <- c(11, 12)
 ```
 
 <table width="500" border="0" cellpadding="0">
@@ -706,14 +734,90 @@ ll[8:11] <- c(3,10,6,11)
 
 <td align="center" valign="center">
 ```{r}
-modradviz2d(x = df[,-c(1:3,15)][ll], cl = factor(df$region), modify = F, ret.proj = T,
-            coord.labels = colnames(df[,-c(1:3,15)][ll]), class.labels = NULL, 
-            palette = kols, pch = letters[1:10][df$group], opt.axis.order = F) -> xproj
-new.dat <- data.frame(xproj, group = df$group, region = df$region)
+modradviz2d(x = df.17[,-c(1,2)][ll], cl = factor(df.17$era), modify = F, 
+            coord.labels = colnames(df.17[,-c(1,2)]), class.labels = NULL,
+            palette = ceramic.palette, pch = c(16,17)[factor(df.17$mf)],
+            opt.axis.order = F)
+```
+<br />
+RadViz2D
+</td>
+</tr>
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+res1 = viz2d_3d(df.17[,-c(1,2)][ll])
+res1 = data.frame(res1, as.factor(df.17$era))
+colnames(res1) = c("x","y","z","class")
+# open 3d window
+# resize window
+par3d(windowRect = c(100, 100, 612, 612))
+# plot
+pch3d(x = res1, y = NULL, z = NULL, xlab = "", ylab="", zlab="",axes = F,cex = 0.5,
+      pch = c(16,17)[factor(df.17$mf)], size = 0.95, color = ceramic.palette)
+box3d(color = "black",lwd = 1)
+rglwidget()
+rgl.close()
+```
+<br />
+Viz3D
+</td>
+
+<td align="center" valign="center">
+```{r}
+radialvis3d(data = df.17[,-c(1,2)][ll], cl = factor(df.17$era), domrp = F, doGtrans = F, 
+            lwd = 3, alpha = 0.025, color = ceramic.palette, with.class.labels = FALSE,
+            ret.trans = F, pch =  c(16,17)[factor(df.17$mf)], point.cex = 0.25)
+rgl.viewpoint(zoom = 0.6)
+rglwidget()
+rgl.close()
+```
+<br />
+RadViz3D
+</td>
+</tr>
+</table>
+
+## Fig. S8: SARS-COV2 Dataset
+```{r}
+setwd("~/Desktop/temp/radviz3d-jcgs-codes/datasets/")
+load("covid19.rda")
+
+## Use hclust to find the order of coordinates for RadViz displays
+#xx  <-  t(scale(asin(sqrt(covid19.variants[,-c(1:3)]))))
+#x.hcl  <- hclust(dist(xx), method = "ward.D2")
+#plot(x.hcl)
+
+ll <- c()
+ll[11] <- 11
+ll[8] <- 9
+ll[c(10,9)] <- c(8, 10)
+ll[c(5, 7)] <- c(2,3)
+ll[c(2 ,3,4,6)] <- c(1, 7, 4, 6)
+ll[1] <- 5
+
+covid19.variants$group <- factor(covid19.variants$group, levels = unique(covid19.variants$group))
+```
+
+<table width="500" border="0" cellpadding="0">
+
+<tr>
+
+<td align="center" valign="center">
+```{r}
+modradviz2d(x = covid19.variants[,-c(1:3)][ll], 
+            cl = factor(covid19.variants$region), modify = F, ret.proj = T,
+            coord.labels = colnames(covid19.variants[,-c(1:3)][ll]), 
+            class.labels = NULL, palette = kols, 
+            pch = letters[covid19.variants$group], opt.axis.order = F) -> xproj
+new.dat <- data.frame(xproj, group = covid19.variants$group, 
+                      region = covid19.variants$region)
 for (i in 1:10) {
   dat <- new.dat[new.dat$region==i,]
-  for (j in 1:11)
-    lines(x = dat[j:(j+1), 1], y = dat[j:(j+1), 2], col = kols[i], lwd = 1.5)
+  for (j in 1:nlevels(covid19.variants$group))
+    lines(x = dat[j:(j+1), 1], y = dat[j:(j+1), 2], lty = 2, col = kols[i], lwd = 1.5)
 }
 ```
 <br />
@@ -725,23 +829,26 @@ RadViz2D
 
 <td align="center" valign="center">
 ```{r}
-res1 = viz2d_3d(df[,-c(1:3,15)][ll])
-res1 = data.frame(res1, as.factor(df$region))
+res1 = viz2d_3d(covid19.variants[,-c(1:3)][ll])
+res1 = data.frame(res1, as.factor(covid19.variants$region))
 colnames(res1) = c("x","y","z","class")
 # open 3d window
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
 pch3d(x = res1, y = NULL, z = NULL, xlab = "", ylab="", zlab="",axes = F,
-      pch = letters[1:10][df$group],size = 0.95, color = kols)
-new.dat <- data.frame(res1[,-4], group = df$group, region = df$region)
+      pch = letters[covid19.variants$group],size = 0.95, color = kols)
+new.dat <- data.frame(res1, group = covid19.variants$group, 
+                      region = covid19.variants$region)
 for (i in 1:10) {
-  dat <- new.dat[new.dat$region==i,]
-  for (j in 1:11)
-    rgl.lines(x = dat[j:(j+1), 1], y = dat[j:(j+1), 2], z = dat[j:(j+1), 3], 
-              color = kols[i], add = T, lwd = 1.5)
+    dat <- new.dat[new.dat$region==i,]
+    rgl::rgl.texts(x = dat[1, 1] - .025, y = dat[1, 2] + .025, z = dat[1, 3] - .025, 
+                   text = as.character(i), cex = 3, color = kols[i])
+    for (j in 2:nlevels(covid19.variants$group))
+        rgl.dashed.lines(start.pt = dat[j-1,1:3], end.pt = dat[j,1:3], dash.length = 0.01, 
+                         color = kols[i], add = T, lwd = 3)
 }
-box3d()
+box3d(color = "black",lwd = 1)
 rglwidget()
 rgl.close()
 ```
@@ -751,21 +858,26 @@ Viz3D
 
 <td align="center" valign="center">
 ```{r}
-radialvis3d(data = df[,-c(1:3)][ll], cl = factor(df$region), domrp = F, doGtrans = F, 
-            lwd = 3, alpha = 0.025, pradius = 0.01, color = kols,
-            with.class.labels = FALSE, shininess = 128, specular = 'black', back = "cull",
-            ret.trans = TRUE, pch =  letters[1:12][dat.w.g12.ma$group.ma], point.cex = 1)-> dat.trns
-new.dat <- data.frame(dat.trns, group = df$group, region = df$region)
+radviz3d::radialvis3d(data = covid19.variants[,-c(1:3)][ll], 
+                      cl = factor(covid19.variants$region), domrp = F, 
+                      doGtrans = F, lwd = 3, alpha = 0.025, color = kols, 
+                      with.class.labels = FALSE, shininess = 128, specular = 'black', 
+                      ret.trans = TRUE, pch = letters[covid19.variants$group],  
+                      coord.cex = 2,point.cex = 2)-> dat.trns
+
+new.dat <- data.frame(dat.trns, group = covid19.variants$group, 
+                      region = covid19.variants$region)
 for (i in 1:10) {
     dat <- new.dat[new.dat$region==i,]
-    rgl.texts(x = dat[1, 1] + .05, y = dat[1, 2] + .05, z = dat[1, 3] + .05, 
+    rgl::rgl.texts(x = dat[1, 1] - .025, y = dat[1, 2] + .025, z = dat[1, 3] - .025, 
                    text = as.character(i), cex = 3, color = kols[i])
-    for (j in 1:11)
-        rgl.lines(x = dat[j:(j+1), 1], y = dat[j:(j+1), 2], z = dat[j:(j+1), 3], 
-                       color = kols[i], add = T, lwd = 2)
+    for (j in 2:nlevels(covid19.variants$group))
+        rgl.dashed.lines(start.pt = dat[j-1,1:3], end.pt = dat[j,1:3], dash.length = 0.01, 
+                         color = kols[i], add = T, lwd = 3)
 }
 rgl.viewpoint(zoom = 0.6)
 rglwidget()
+rgl.close()
 ```
 <br />
 RadViz3D
