@@ -26,7 +26,6 @@ library(grDevices)
 library(radviz3d)
 library(rgl)
 
-setwd("~/Desktop/temp/radviz3d-jcgs-codes/")
 source("modradviz2d-2.R")
 
 viz2d_3d <- function(x, angles =  2*pi*(0:(ncol(x)-1))/ncol(x)) {
@@ -53,9 +52,9 @@ cb.palette = c("#A6CEE3", "#1F78B4", "#FDBF6F", "#FF7F00")
 oil.palette = c(brewer.pal(8,"Dark2"), "cyan")
 # for ceramic sample data
 glaze = brewer.pal(12,"Paired")[c(2,4,6,10)]
-body = lighten(glaze, 0.6) # higher percetange -> ligher color
-ceramic.palette = c(body[1],glaze[1],body[2],glaze[2],
-                    body[3],glaze[3],body[4],glaze[4])
+ceramic.palette  <-  brewer.pal(12,"Paired")[c(1:6,9,10)]
+ceramic.palette  <- as.vector(apply(matrix(ceramic.palette, nrow = 2), 2, 
+                                    FUN = function(x) (colorRampPalette(x)(4)))[c(2,4),])
 # for SARS-COV2 data
 kols1 <- c(RColorBrewer::brewer.pal(name = "Set2", n = 8)[-1],
            RColorBrewer::brewer.pal(name = "Greens", n = 9)[7],
@@ -63,7 +62,7 @@ kols1 <- c(RColorBrewer::brewer.pal(name = "Set2", n = 8)[-1],
            RColorBrewer::brewer.pal(name = "Blues", n = 9)[7])
 kols2 <- c(RColorBrewer::brewer.pal(name = "Dark2", n = 8),
            RColorBrewer::brewer.pal(name = "Reds", n = 9)[8],
-           RColorBrewer::brewer.pal(name = "Blues", n = 9)[8])
+           RColorBrewer::brewer.pal(name = "Blues", n = 9)[5])
 kols <- kols2
 
 # dashed lines function
@@ -239,10 +238,7 @@ save(overlap_mat_sim, sim_data, file = "sim_data_5.rda")
 
 ## Fig. S2: Wine Dataset
 ```{r}
-wine = read.table(file = "wine.dat", sep=",",
-                  header=F, col.names = c("cultivar","Ahl","Malic","Ash", "Alk","Mg",
-                                          "Phnls","Flvds","Nonfp","Pthyns",
-                                          "Color","Hue","ODdil","Prol")) 
+# load dataset from the radviz3d package
 df = wine
 ```
 
@@ -328,6 +324,7 @@ RadViz3D
 
 ## Fig. S3: Crabs Dataset with CL
 ```{r}
+# load dataset from the MASS package
 data("crabs")
 crabs$group = as.factor(crabs$sp:crabs$sex)
 df = crabs[,4:9]
@@ -501,6 +498,7 @@ RadViz3D
 
 ## Fig. S5: Olive Oils Dataset with 9 Regions of Italy.
 ```{r}
+# load dataset from the freqparcoord package
 data("oliveoils")
 oliveoils = oliveoils[,-2]
 class = factor(oliveoils$Area)
@@ -712,8 +710,8 @@ RadViz3D
 
 ## Fig. S7: Ceramic Sample Datasets.
 ```{r}
-setwd("~/Desktop/temp/radviz3d-jcgs-codes/datasets/")
-load("ceramic.rda")
+# load dataset from the radviz3d package
+df = ceramic
 
 ## Use hclust to find the order of coordinates for RadViz displays
 #xx  <-  t(scale(asin(sqrt(df.17[,-c(1:2)]))))
@@ -734,9 +732,9 @@ ll[c(11,14)] <- c(11, 12)
 
 <td align="center" valign="center">
 ```{r}
-modradviz2d(x = df.17[,-c(1,2)][ll], cl = factor(df.17$era), modify = F, 
-            coord.labels = colnames(df.17[,-c(1,2)]), class.labels = NULL,
-            palette = ceramic.palette, pch = c(16,17)[factor(df.17$mf)],
+modradviz2d(x = df[,-c(1,2)][ll], cl = factor(df$era), modify = F, 
+            coord.labels = colnames(df[,-c(1,2)]), class.labels = NULL,
+            palette = ceramic.palette, pch = c(16,17)[factor(df$mf)],
             opt.axis.order = F)
 ```
 <br />
@@ -748,16 +746,17 @@ RadViz2D
 
 <td align="center" valign="center">
 ```{r}
-res1 = viz2d_3d(df.17[,-c(1,2)][ll])
-res1 = data.frame(res1, as.factor(df.17$era))
+res1 = viz2d_3d(df[,-c(1,2)][ll])
+res1 = data.frame(res1, as.factor(df$era))
 colnames(res1) = c("x","y","z","class")
 # open 3d window
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-pch3d(x = res1, y = NULL, z = NULL, xlab = "", ylab="", zlab="",axes = F,cex = 0.5,
-      pch = c(16,17)[factor(df.17$mf)], size = 0.95, color = ceramic.palette)
-box3d(color = "black",lwd = 1)
+pch3d(x = res1[,1], y = res1[,2], z = res1[,3], xlab = "", ylab="", zlab="",
+      axes = F, pch = c(16,17)[factor(df$mf)], cex = 0.55, 
+      color = ceramic.palette)
+box3d()
 rglwidget()
 rgl.close()
 ```
@@ -767,9 +766,9 @@ Viz3D
 
 <td align="center" valign="center">
 ```{r}
-radialvis3d(data = df.17[,-c(1,2)][ll], cl = factor(df.17$era), domrp = F, doGtrans = F, 
+radialvis3d(data = df[,-c(1,2)][ll], cl = factor(df$era), domrp = F, doGtrans = F, 
             lwd = 3, alpha = 0.025, color = ceramic.palette, with.class.labels = FALSE,
-            ret.trans = F, pch =  c(16,17)[factor(df.17$mf)], point.cex = 0.25)
+            ret.trans = F, pch =  c(16,17)[factor(df$mf)], point.cex = 0.175)
 rgl.viewpoint(zoom = 0.6)
 rglwidget()
 rgl.close()
@@ -782,11 +781,11 @@ RadViz3D
 
 ## Fig. S8: SARS-COV2 Dataset
 ```{r}
-setwd("~/Desktop/temp/radviz3d-jcgs-codes/datasets/")
-load("covid19.rda")
+# load dataset from the radviz3d package
+df = sarscov2.us.variants
 
 ## Use hclust to find the order of coordinates for RadViz displays
-#xx  <-  t(scale(asin(sqrt(covid19.variants[,-c(1:3)]))))
+#xx  <-  t(scale(asin(sqrt(df[,-c(1:3)]))))
 #x.hcl  <- hclust(dist(xx), method = "ward.D2")
 #plot(x.hcl)
 
@@ -798,7 +797,7 @@ ll[c(5, 7)] <- c(2,3)
 ll[c(2 ,3,4,6)] <- c(1, 7, 4, 6)
 ll[1] <- 5
 
-covid19.variants$group <- factor(covid19.variants$group, levels = unique(covid19.variants$group))
+df$group <- factor(df$group, levels = unique(df$group))
 ```
 
 <table width="500" border="0" cellpadding="0">
@@ -807,16 +806,16 @@ covid19.variants$group <- factor(covid19.variants$group, levels = unique(covid19
 
 <td align="center" valign="center">
 ```{r}
-modradviz2d(x = covid19.variants[,-c(1:3)][ll], 
-            cl = factor(covid19.variants$region), modify = F, ret.proj = T,
-            coord.labels = colnames(covid19.variants[,-c(1:3)][ll]), 
+modradviz2d(x = df[,-c(1:3)][ll], 
+            cl = factor(df$region), modify = F, ret.proj = T,
+            coord.labels = colnames(df[,-c(1:3)][ll]), 
             class.labels = NULL, palette = kols, 
-            pch = letters[covid19.variants$group], opt.axis.order = F) -> xproj
-new.dat <- data.frame(xproj, group = covid19.variants$group, 
-                      region = covid19.variants$region)
+            pch = letters[df$group], opt.axis.order = F) -> xproj
+new.dat <- data.frame(xproj, group = df$group, 
+                      region = df$region)
 for (i in 1:10) {
   dat <- new.dat[new.dat$region==i,]
-  for (j in 1:nlevels(covid19.variants$group))
+  for (j in 1:nlevels(df$group))
     lines(x = dat[j:(j+1), 1], y = dat[j:(j+1), 2], lty = 2, col = kols[i], lwd = 1.5)
 }
 ```
@@ -829,26 +828,27 @@ RadViz2D
 
 <td align="center" valign="center">
 ```{r}
-res1 = viz2d_3d(covid19.variants[,-c(1:3)][ll])
-res1 = data.frame(res1, as.factor(covid19.variants$region))
+res1 = viz2d_3d(df[,-c(1:3)][ll])
+res1 = data.frame(res1, as.factor(df$region))
 colnames(res1) = c("x","y","z","class")
 # open 3d window
 # resize window
 par3d(windowRect = c(100, 100, 612, 612))
 # plot
-pch3d(x = res1, y = NULL, z = NULL, xlab = "", ylab="", zlab="",axes = F,
-      pch = letters[covid19.variants$group],size = 0.95, color = kols)
-new.dat <- data.frame(res1, group = covid19.variants$group, 
-                      region = covid19.variants$region)
+pch3d(x = res1[,1], y = res1[,2], z = res1[,3], xlab = "", ylab="", zlab="",
+      axes = F, pch = letters[df$group], cex = 1, color = kols)
+new.dat <- data.frame(res1, group = df$group, 
+                      region = df$region)
 for (i in 1:10) {
     dat <- new.dat[new.dat$region==i,]
     rgl::rgl.texts(x = dat[1, 1] - .025, y = dat[1, 2] + .025, z = dat[1, 3] - .025, 
-                   text = as.character(i), cex = 3, color = kols[i])
-    for (j in 2:nlevels(covid19.variants$group))
+                   text = as.character(i), cex = 2, color = kols[i])
+    for (j in 2:nlevels(df$group))
         rgl.dashed.lines(start.pt = dat[j-1,1:3], end.pt = dat[j,1:3], dash.length = 0.01, 
-                         color = kols[i], add = T, lwd = 3)
+                         color = kols[i], add = T, lwd = 2)
 }
-box3d(color = "black",lwd = 1)
+box3d(color = "black", lwd = 1)
+rgl.viewpoint(zoom = 0.6)
 rglwidget()
 rgl.close()
 ```
@@ -858,22 +858,22 @@ Viz3D
 
 <td align="center" valign="center">
 ```{r}
-radviz3d::radialvis3d(data = covid19.variants[,-c(1:3)][ll], 
-                      cl = factor(covid19.variants$region), domrp = F, 
+radviz3d::radialvis3d(data = df[,-c(1:3)][ll], 
+                      cl = factor(df$region), domrp = F, 
                       doGtrans = F, lwd = 3, alpha = 0.025, color = kols, 
                       with.class.labels = FALSE, shininess = 128, specular = 'black', 
-                      ret.trans = TRUE, pch = letters[covid19.variants$group],  
-                      coord.cex = 2,point.cex = 2)-> dat.trns
+                      ret.trans = TRUE, pch = letters[df$group],  
+                      coord.cex = 1.5,point.cex = 1.5)-> dat.trns
 
-new.dat <- data.frame(dat.trns, group = covid19.variants$group, 
-                      region = covid19.variants$region)
+new.dat <- data.frame(dat.trns, group = df$group, 
+                      region = df$region)
 for (i in 1:10) {
     dat <- new.dat[new.dat$region==i,]
     rgl::rgl.texts(x = dat[1, 1] - .025, y = dat[1, 2] + .025, z = dat[1, 3] - .025, 
-                   text = as.character(i), cex = 3, color = kols[i])
-    for (j in 2:nlevels(covid19.variants$group))
+                   text = as.character(i), cex = 1.75, color = kols[i])
+    for (j in 2:nlevels(df$group))
         rgl.dashed.lines(start.pt = dat[j-1,1:3], end.pt = dat[j,1:3], dash.length = 0.01, 
-                         color = kols[i], add = T, lwd = 3)
+                         color = kols[i], add = T, lwd = 1.5)
 }
 rgl.viewpoint(zoom = 0.6)
 rglwidget()
