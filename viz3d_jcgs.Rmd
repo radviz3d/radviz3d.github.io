@@ -41,7 +41,7 @@ viz2d_3d <- function(x, angles =  2*pi*(0:(ncol(x)-1))/ncol(x)) {
 set.seed(2020)
 res_viz3d <- list()
 sim.palette <- brewer.pal(8,"Dark2")[c(5,8,4,7,3)]
-load("sim_data_5.rda")
+# load dataset:sim_data from the radviz3d package
 for (i in 1:3){
   df <- sim_data[[i]]
   res1 = viz2d_3d(df[,-1])

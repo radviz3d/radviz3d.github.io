@@ -32,7 +32,7 @@ library(rgl)
 set.seed(2020)
 res_radviz <- list()
 sim.palette <- brewer.pal(8,"Dark2")[c(5,8,4,7,3)]
-load("sim_data_5.rda")
+# load dataset:sim_data from the radviz3d package
 for (i in 1:3){
   df <- sim_data[[i]]
   radialvis3d(data = df[,-1], cl = factor(df$class), domrp = F, doGtrans = F, lwd = 2, 

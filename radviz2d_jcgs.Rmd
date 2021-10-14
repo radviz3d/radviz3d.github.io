@@ -120,8 +120,8 @@ overlap.map <-
 
 <td align="center" valign="center">
 ```{r}
-load("sim_data_5.rda")
 sim.palette = sim_pal <- brewer.pal(8,"Dark2")[c(5,8,4,7,3)]
+# load dataset from the radviz3d package
 df <- sim_data[[1]]
 overlap.map((2*overlap_mat_sim[[1]] - diag(5))*1000, lab.col = sim_pal, scale = expression("("%*%10^-3~")"), map.cex = 2.75, lab.cex = 4, legend.cex = 1.5, font = 2, scale.pos = 0.35, legend.width = 0.1)
 ```
