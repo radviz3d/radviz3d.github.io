@@ -842,10 +842,10 @@ new.dat <- data.frame(res1, group = df$group,
 for (i in 1:10) {
     dat <- new.dat[new.dat$region==i,]
     rgl::rgl.texts(x = dat[1, 1] - .025, y = dat[1, 2] + .025, z = dat[1, 3] - .025, 
-                   text = as.character(i), cex = 2, color = kols[i])
+                   text = as.character(i), cex = 1.2, color = kols[i])
     for (j in 2:nlevels(df$group))
         rgl.dashed.lines(start.pt = dat[j-1,1:3], end.pt = dat[j,1:3], dash.length = 0.01, 
-                         color = kols[i], add = T, lwd = 2)
+                         color = kols[i], add = T, lwd = 1)
 }
 box3d(color = "black", lwd = 1)
 rgl.viewpoint(zoom = 0.6)
@@ -855,6 +855,9 @@ rgl.close()
 <br />
 Viz3D
 </td>
+</tr>
+
+<tr>
 
 <td align="center" valign="center">
 ```{r}
@@ -863,17 +866,17 @@ radviz3d::radialvis3d(data = df[,-c(1:3)][ll],
                       doGtrans = F, lwd = 3, alpha = 0.025, color = kols, 
                       with.class.labels = FALSE, shininess = 128, specular = 'black', 
                       ret.trans = TRUE, pch = letters[df$group],  
-                      coord.cex = 1.5,point.cex = 1.5)-> dat.trns
+                      coord.cex = 1.5,point.cex = 1.15)-> dat.trns
 
 new.dat <- data.frame(dat.trns, group = df$group, 
                       region = df$region)
 for (i in 1:10) {
     dat <- new.dat[new.dat$region==i,]
     rgl::rgl.texts(x = dat[1, 1] - .025, y = dat[1, 2] + .025, z = dat[1, 3] - .025, 
-                   text = as.character(i), cex = 1.75, color = kols[i])
+                   text = as.character(i), cex = 1.25, color = kols[i])
     for (j in 2:nlevels(df$group))
         rgl.dashed.lines(start.pt = dat[j-1,1:3], end.pt = dat[j,1:3], dash.length = 0.01, 
-                         color = kols[i], add = T, lwd = 1.5)
+                         color = kols[i], add = T, lwd = 1.25)
 }
 rgl.viewpoint(zoom = 0.6)
 rglwidget()
