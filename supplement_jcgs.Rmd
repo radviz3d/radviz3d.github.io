@@ -879,7 +879,7 @@ for (i in 1:10) {
                          color = kols[i], add = T, lwd = 1.25)
 }
 rgl.viewpoint(zoom = 0.6)
-rglwidget()
+rglwidget(width = "1500", height = "1500")
 rgl.close()
 ```
 <br />
@@ -887,6 +887,7 @@ RadViz3D
 </td>
 </tr>
 </table>
+
 
 
 
