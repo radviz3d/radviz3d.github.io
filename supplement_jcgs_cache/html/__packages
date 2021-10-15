@@ -1,0 +1,14 @@
+base
+MASS
+MixSim
+RColorBrewer
+ggplot2
+GGally
+FNN
+mvtnorm
+freqparcoord
+Matrix
+expm
+rgl
+radviz3d
+colorspace
