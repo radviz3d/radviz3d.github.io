@@ -2,4 +2,4 @@
 title: "Description"
 ---
 
-This site hosts the experiments comparing the RadViz3D methods with other methods.
+This site hosts the experiments comparing RadViz3D to RadViz2D and Viz3D.
