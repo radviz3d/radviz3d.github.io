@@ -65,7 +65,7 @@ kols2 <- c(RColorBrewer::brewer.pal(name = "Dark2", n = 8),
            RColorBrewer::brewer.pal(name = "Blues", n = 9)[5])
 kols <- kols2
 
-# dashed lines function
+# Plot dashed lines 
 rgl.dashed.lines <- function(start.pt, end.pt, dash.length, ...)
 {
     curr.pt <- start.pt
@@ -79,7 +79,8 @@ rgl.dashed.lines <- function(start.pt, end.pt, dash.length, ...)
         j <- j + 1
         rgl::rgl.lines(x = rbind(curr.pt,next.pt), ...)
         curr.pt  <- next.pt + dash.length * direction
-        next.pt <- curr.pt + dash.length * direction
+        remaining.length <- sqrt(sum((end.pt-curr.pt)^2))
+        next.pt <- curr.pt + min(dash.length, remaining.length) * direction
         j  <- j + 1
     }
 }
