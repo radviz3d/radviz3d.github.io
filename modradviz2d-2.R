@@ -247,7 +247,8 @@ modradviz2d.fn <- function(x, angles = 2*pi*(0:(ncol(x)-1))/ncol(x), modify = FA
 
 ## modradviz2d(x = iris[,1:4], cl = iris[,5], modify = F, coord.labels = c("Sepal Length", "Sepal Width", "Petal Length", "Petal Length"), class.labels.locations = matrix(c(0.45, 0.6, -0.42, -0.1, 0.12, -0.67), ncol = 2, byrow = T), font.family = 'xkcd')
 
-modradviz2d <- function(x, angles = 2*pi*(0:(ncol(x)-1))/ncol(x), modify = FALSE, cl = NULL, palette = rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")), coord.labels = colnames(x), coord.font = 2, coord.cex = 1.1, class.labels = levels(factor(cl)), class.labels.locations = NULL, opt.axis.order = TRUE, ...) {
+modradviz2d <- function(x, angles = 2*pi*(0:(ncol(x)-1))/ncol(x), modify = FALSE, cl = NULL, palette = rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")), coord.labels = colnames(x), coord.font = 2, coord.cex = 1.1, 
+                        class.labels = levels(factor(cl)), class.labels.locations = NULL, opt.axis.order = TRUE, ret.proj = F, ...) {
   ##
   ## change all axis to be between 0 and 1
   ##
@@ -264,9 +265,10 @@ modradviz2d <- function(x, angles = 2*pi*(0:(ncol(x)-1))/ncol(x), modify = FALSE
   modradviz2d.fn(x = x[,idx.opt], angles = angles, modify = modify, cl = cl, 
                  palette = palette, coord.labels = coord.labels[idx.opt], 
                  coord.font = coord.font, coord.cex = coord.cex, 
-                 class.labels = class.labels, 
+                 class.labels = class.labels, ret.proj = ret.proj,
                  class.labels.locations = class.labels.locations, ...) -> xproj
-  return(xproj)
+  if (ret.proj) 
+  xproj
 }
 
 #modradviz2d(x = iris[,1:4], cl = iris[,5], modify = F, coord.labels = c("Sepal Length", "Sepal Width", "Petal Length", "Petal Length"), class.labels.locations = matrix(c(0.4, 0.6, -0.42, -0.1, 0.1, -0.67), ncol = 2, byrow = T))
