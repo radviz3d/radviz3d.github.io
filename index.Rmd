@@ -11,5 +11,7 @@ This page contains a navigation bar on the left for accessing each dataset.
 ### Instructions for interactive views
 
 The 3D interactive plots are implemented with the `rgl` functions and here are instructions for manipulation:
+
 - Rotation: Click and hold with the left mouse button, then drag the plot to rotate it and gain different perspectives.
+
 - Resize: Zoom in and out with the scroll wheel, or the right mouse button.
