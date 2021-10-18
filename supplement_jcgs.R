@@ -1,21 +1,8 @@
----
-title: "Visualizations"
----
-
-<style type="text/css">
-.main-container {
-  max-width: 1500px;
-  margin-left: auto;
-  margin-right: auto;
-}
-</style>
-
-
-```{r, echo=FALSE}
+## ---- echo=FALSE-----------------------------------------------------------------------
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, error = FALSE, cache = T)
-```
 
-```{r}
+
+## --------------------------------------------------------------------------------------
 library(MixSim)
 library(RColorBrewer)
 library(colorspace)
@@ -85,9 +72,9 @@ rgl.dashed.lines <- function(start.pt, end.pt, dash.length, ...)
     }
 }
 
-```
 
-```{r}
+
+## --------------------------------------------------------------------------------------
 ##
 ## Display the map of pairwise overlap measures of Maitra and Melnykov
 ## (JCGS, 2012)
@@ -171,85 +158,37 @@ overlap.map <-
     frame()
     }
 
-```
-
-We display visualizations using RadViz2D, RadViz3D, Viz3D for simulation datasets and real datasets.
-
-# Simulated Datasets
-```{r, eval = F}
-omegas <- c(0.001, 0.01, 0.05)
-sim_data <- NULL
-overlap_mat_sim <- NULL
-
-seed = c(456, 1234, 3456)
-for (i in 1:length(omegas)){
-  set.seed(seed[i])
-  p = 5
-  Q <- MixGOM(goMega = omegas[i], K = 5, p = p, sph = F, hom = F)
-  overlap_mat_sim[[i]] <- overlap(Q$Pi, Q$Mu, Q$S)$OmegaMap
-  print(t(overlap(Q$Pi, Q$Mu, Q$S)$OmegaMap) + overlap(Q$Pi, Q$Mu, Q$S)$OmegaMap - diag(5))
-  A <- simdataset(n = 500, Pi = Q$Pi, Mu = Q$Mu, S = Q$S)
-  sn <- A$X
-  # colnames(sn) <- paste(1:4)
-  class <- as.factor(A$id)
-  sn.df <- data.frame(class,sn)
-  sim_data[[i]] <- sn.df
-}
-
-save(overlap_mat_sim, sim_data, file = "sim_data_5.rda")
-```
 
 
-## Fig. S1: Overlap Map, RadViz2D, Viz3D and RadViz3D of Simulated 5D Datasets
-
-(a) [RadViz2D](radviz2d_jcgs.html)
-(b) [Viz3D](viz3d_jcgs.html)
-(c) [RadViz3D](radviz3d_jcgs.html)
-
-
-<!-- # ```{r} -->
-<!-- # res_radviz <- list() -->
-<!-- # set.seed(2015) -->
-<!-- # for (i in 1:length(omegas)){ -->
-<!-- #   sn.df <- sim_data[[i]] -->
-<!-- #   radialvis3d(data = sn.df[,-ncol(sn.df)], cl = as.factor(sn.df[,ncol(sn.df)]), domrp = T, doGtrans = T, lwd = 2, alpha = 0.325, point.cex = 0.15, color = brewer.pal(5, "Paired"), message = F) -->
-<!-- #   # rgl::par3d(windowRect = c(0, 0, 1200, 1200)) -->
-<!-- #   # rgl::par3d(viewport = c(0,0,1200, 1200)) -->
-<!-- #   # legend3d("topright", legend = c("Normal", "ASD subject"), pch = 19, col = senator.palette, cex=0.8, inset=c(0.01)) -->
-<!-- #   rgl::rgl.viewpoint(zoom = 0.6) -->
-<!-- #   res_radviz[[i]] <- rgl::rglwidget();rgl.close() -->
-<!-- # } -->
-<!-- # ``` -->
-
-
-
+## ---- eval = F-------------------------------------------------------------------------
+## omegas <- c(0.001, 0.01, 0.05)
+## sim_data <- NULL
+## overlap_mat_sim <- NULL
+## 
+## seed = c(456, 1234, 3456)
+## for (i in 1:length(omegas)){
+##   set.seed(seed[i])
+##   p = 5
+##   Q <- MixGOM(goMega = omegas[i], K = 5, p = p, sph = F, hom = F)
+##   overlap_mat_sim[[i]] <- overlap(Q$Pi, Q$Mu, Q$S)$OmegaMap
+##   print(t(overlap(Q$Pi, Q$Mu, Q$S)$OmegaMap) + overlap(Q$Pi, Q$Mu, Q$S)$OmegaMap - diag(5))
+##   A <- simdataset(n = 500, Pi = Q$Pi, Mu = Q$Mu, S = Q$S)
+##   sn <- A$X
+##   # colnames(sn) <- paste(1:4)
+##   class <- as.factor(A$id)
+##   sn.df <- data.frame(class,sn)
+##   sim_data[[i]] <- sn.df
+## }
+## 
+## save(overlap_mat_sim, sim_data, file = "sim_data_5.rda")
 
 
-
-
-
-
-
-
-
-
-
-
-# Real Datasets
-
-## Fig. S2: Wine Dataset
-```{r}
+## --------------------------------------------------------------------------------------
 # load dataset from the radviz3d package
 df = wine
-```
 
 
-<table width="500" border="0" cellpadding="0">
-
-<tr>
-
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 df$cultivar = factor(df$cultivar)
 N <- nrow(df)
 p <- ncol(df) - 1
@@ -271,26 +210,15 @@ overlap_map_sym <- t(overlap_res$OmegaMap) + overlap_res$OmegaMap - diag(K)
 
 overlap.map(overlap_map_sym*1000, lab.col = wine.palette[1:K], scale = expression(""%*%10^-3),  map.cex = 2.75, lab.cex = 4, legend.cex = 1.5, font = 2,
             scale.pos = 0, legend.width = 0.5)
-```
-<br />
-Overlap Map
-</td>
 
-<td align="center" valign="center">
-```{r}
+
+## --------------------------------------------------------------------------------------
 modradviz2d(x = df[,-1], cl = df$cultivar, modify = F, 
             coord.labels = colnames(df[,-1]), class.labels = NULL,
             palette = wine.palette, opt.axis.order = F)
-```
-<br />
-RadViz2D
-</td>
-</tr>
 
-<tr>
 
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 res1 = viz2d_3d(df[,-1])
 res1 = data.frame(res1, as.factor(df$cultivar))
 colnames(res1) = c("x","y","z","class")
@@ -303,41 +231,25 @@ with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0
 box3d()
 rglwidget()
 rgl.close()
-```
-<br />
-Viz3D
-</td>
 
-<td align="center" valign="center">
-```{r}
+
+## --------------------------------------------------------------------------------------
 radialvis3d(data = df[,-1], cl = factor(df$cultivar), domrp = F, doGtrans = F, lwd = 2, 
             alpha = 0.025,color = wine.palette, coord.font = 4,coord.cex = 1.5,
             class.labels = NULL, point.cex = 0.15)
 rgl::rgl.viewpoint(zoom = 0.6)
 rgl::rglwidget()
 rgl.close()
-```
-<br />
-RadViz3D
-</td>
-</tr>
-</table>
 
-## Fig. S3: Crabs Dataset with CL
-```{r}
+
+## --------------------------------------------------------------------------------------
 # load dataset from the MASS package
 data("crabs")
 crabs$group = as.factor(crabs$sp:crabs$sex)
 df = crabs[,4:9]
-```
 
 
-<table width="500" border="0" cellpadding="0">
-
-<tr>
-
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 df$group = factor(df$group)
 N <- nrow(df)
 p <- ncol(df) - 1
@@ -359,26 +271,15 @@ overlap_map_sym <- t(overlap_res$OmegaMap) + overlap_res$OmegaMap - diag(K)
 
 overlap.map(overlap_map_sym*100, lab.col = cb.palette[1:K], scale = expression(""%*%10^-2~""), map.cex = 2.75, lab.cex = 4, legend.cex = 1.5, 
             font = 2, scale.pos = 0.1, legend.width = 0.1)
-```
-<br />
-Overlap Map
-</td>
 
-<td align="center" valign="center">
-```{r}
+
+## --------------------------------------------------------------------------------------
 modradviz2d(x = df[,-6], cl = df$group, modify = F, 
             coord.labels = colnames(df[,-6]), class.labels = NULL,
             palette = cb.palette, opt.axis.order = F)
-```
-<br />
-RadViz2D
-</td>
-</tr>
 
-<tr>
 
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 res1 = viz2d_3d(df[,-6])
 res1 = data.frame(res1, as.factor(df$group))
 colnames(res1) = c("x","y","z","class")
@@ -391,40 +292,24 @@ with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0
 box3d()
 rglwidget()
 rgl.close()
-```
-<br />
-Viz3D
-</td>
 
-<td align="center" valign="center">
-```{r}
+
+## --------------------------------------------------------------------------------------
 radialvis3d(data = df[,-6], cl = factor(df$group), domrp = F, doGtrans = F, lwd = 2, 
             alpha = 0.025, color = cb.palette, class.labels = NULL, point.cex = 0.15)
 rgl::rgl.viewpoint(zoom = 0.6)
 rgl::rglwidget()
 rgl.close()
-```
-<br />
-RadViz3D
-</td>
-</tr>
-</table>
 
-## Fig. S4: Crabs Dataset without CL
-```{r}
+
+## --------------------------------------------------------------------------------------
 data("crabs")
 crabs$group = as.factor(crabs$sp:crabs$sex)
 df = crabs[,4:9]
 df = df[,-3]
-```
 
 
-<table width="500" border="0" cellpadding="0">
-
-<tr>
-
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 df$group = factor(df$group)
 N <- nrow(df)
 p <- ncol(df) - 1
@@ -446,26 +331,15 @@ overlap_map_sym <- t(overlap_res$OmegaMap) + overlap_res$OmegaMap - diag(K)
 
 overlap.map(overlap_map_sym*100, lab.col = cb.palette[1:K], scale = expression(""%*%10^-2~""), map.cex = 2.75, lab.cex = 4, legend.cex = 1.5, 
             font = 2, scale.pos = 0.1, legend.width = 0.1)
-```
-<br />
-Overlap Map
-</td>
 
-<td align="center" valign="center">
-```{r}
+
+## --------------------------------------------------------------------------------------
 modradviz2d(x = df[,-5], cl = df$group, modify = F, 
             coord.labels = colnames(df[,-5]), class.labels = NULL,
             palette = cb.palette, opt.axis.order = F)
-```
-<br />
-RadViz2D
-</td>
-</tr>
 
-<tr>
 
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 res1 = viz2d_3d(df[,-5])
 res1 = data.frame(res1, as.factor(df$group))
 colnames(res1) = c("x","y","z","class")
@@ -478,27 +352,16 @@ with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0
 box3d()
 rglwidget()
 rgl.close()
-```
-<br />
-Viz3D
-</td>
 
-<td align="center" valign="center">
-```{r}
+
+## --------------------------------------------------------------------------------------
 radialvis3d(data = df[,-5], cl = factor(df$group), domrp = F, doGtrans = F, lwd = 2, 
             alpha = 0.025, color = cb.palette, class.labels = NULL, point.cex = 0.15)
 rgl::rgl.viewpoint(zoom = 0.6)
 rgl::rglwidget();rgl.close()
-```
-<br />
-RadViz3D
-</td>
-</tr>
-</table>
 
 
-## Fig. S5: Olive Oils Dataset with 9 Regions of Italy.
-```{r}
+## --------------------------------------------------------------------------------------
 # load dataset from the freqparcoord package
 data("oliveoils")
 oliveoils = oliveoils[,-2]
@@ -514,15 +377,9 @@ class = sub("Coast-Sardinia","8-Coast-Sardinia",class)
 class = sub("Inland-Sardinia","9-Inland-Sardinia",class)
 df = data.frame(class, oliveoils[,-1])
 
-```
 
 
-<table width="500" border="0" cellpadding="0">
-
-<tr>
-
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 df$class = factor(df$class)
 N <- nrow(df)
 p <- ncol(df) - 1
@@ -547,26 +404,15 @@ overlap_map_sym <- t(overlap_res$OmegaMap) + overlap_res$OmegaMap - diag(K)
 overlap.map(overlap_map_sym*1000, lab.col = oil.palette[order], 
             scale = expression(""%*%10^-3~""), map.cex = 2.55, lab.cex = 4, 
             font = 2, legend.cex = 2.1, scale.pos = 1.5, legend.width = 0.05)
-```
-<br />
-Overlap Map
-</td>
 
-<td align="center" valign="center">
-```{r}
+
+## --------------------------------------------------------------------------------------
 modradviz2d(x = df[,-1], cl = df$class, modify = F, 
             coord.labels = colnames(df[,-1]), class.labels = NULL,
             palette = oil.palette, opt.axis.order = F)
-```
-<br />
-RadViz2D
-</td>
-</tr>
 
-<tr>
 
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 res1 = viz2d_3d(df[,-1])
 res1 = data.frame(res1, as.factor(df$class))
 colnames(res1) = c("x","y","z","class")
@@ -579,28 +425,18 @@ with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0
 box3d()
 rglwidget()
 rgl.close()
-```
-<br />
-Viz3D
-</td>
 
-<td align="center" valign="center">
-```{r}
+
+## --------------------------------------------------------------------------------------
 radialvis3d(data = df[,-1], cl = factor(df$class), domrp = F, doGtrans = F, lwd = 2, 
             alpha = 0.025, color = oil.palette, coord.cex = 1.15,
             class.labels = NULL, point.cex = 0.15)
 rgl::rgl.viewpoint(zoom = 0.6)
 rgl::rglwidget()
 rgl.close()
-```
-<br />
-RadViz3D
-</td>
-</tr>
-</table>
 
-## Fig. S6: Olive Oils Dataset with 3 Areas of Italy.
-```{r}
+
+## --------------------------------------------------------------------------------------
 data("oliveoils")
 oliveoils = oliveoils[,-2]
 class = factor(oliveoils$Area)
@@ -626,15 +462,9 @@ group = sub("8-Coast-Sardinia","3-sardinia",group)
 group = sub("9-Inland-Sardinia","3-sardinia",group)
 df = data.frame(class = group, oliveoils[,-1])
 
-```
 
 
-<table width="500" border="0" cellpadding="0">
-
-<tr>
-
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 df$class = factor(df$class)
 N <- nrow(df)
 p <- ncol(df) - 1
@@ -657,26 +487,15 @@ overlap_map_sym <- t(overlap_res$OmegaMap) + overlap_res$OmegaMap - diag(K)
 overlap.map(overlap_map_sym*1000, lab.col = wine.palette[1:K], 
             scale = expression(""%*%10^-3~""), map.cex = 2.75, lab.cex = 4, 
             font = 2, legend.cex = 1.5, scale.pos = 0, legend.width = 1)
-```
-<br />
-Overlap Map
-</td>
 
-<td align="center" valign="center">
-```{r}
+
+## --------------------------------------------------------------------------------------
 modradviz2d(x = df[,-1], cl = df$class, modify = F, 
             coord.labels = colnames(df[,-1]), class.labels = NULL,
             palette = wine.palette, opt.axis.order = F)
-```
-<br />
-RadViz2D
-</td>
-</tr>
 
-<tr>
 
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 res1 = viz2d_3d(df[,-1])
 res1 = data.frame(res1, as.factor(df$class))
 colnames(res1) = c("x","y","z","class")
@@ -689,28 +508,18 @@ with(res1, plot3d(xlab = "", ylab="", zlab="",axes = F, x,y,z, type="s",size = 0
 box3d()
 rglwidget()
 rgl.close()
-```
-<br />
-Viz3D
-</td>
 
-<td align="center" valign="center">
-```{r}
+
+## --------------------------------------------------------------------------------------
 radialvis3d(data = df[,-1], cl = factor(df$class), domrp = F, doGtrans = F, lwd = 2, 
             alpha = 0.025,  color = wine.palette, coord.cex = 1.5, point.cex = 0.15,
             class.labels = NULL)
 rgl::rgl.viewpoint(zoom = 0.6)
 rgl::rglwidget()
 rgl.close()
-```
-<br />
-RadViz3D
-</td>
-</tr>
-</table>
 
-## Fig. S7: celadon Sample Datasets.
-```{r}
+
+## --------------------------------------------------------------------------------------
 # load dataset from the radviz3d package
 df = celadon
 
@@ -725,28 +534,16 @@ ll[c(2,5,7,10,8)] <- c(5, 13, 1, 10, 4)
 ll[c(13, 15, 16)] <- c(3, 15, 16)
 ll[c(12, 17)] <- c(7,8)
 ll[c(11,14)] <- c(11, 12)
-```
 
-<table width="500" border="0" cellpadding="0">
 
-<tr>
-
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 modradviz2d(x = df[,-c(1,2)][ll], cl = factor(df$era), modify = F, 
             coord.labels = colnames(df[,-c(1,2)]), class.labels = NULL,
             palette = celadon.palette, pch = c(16,17)[factor(df$mf)],
             opt.axis.order = F)
-```
-<br />
-RadViz2D
-</td>
-</tr>
 
-<tr>
 
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 res1 = viz2d_3d(df[,-c(1,2)][ll])
 res1 = data.frame(res1, as.factor(df$era))
 colnames(res1) = c("x","y","z","class")
@@ -760,28 +557,18 @@ pch3d(x = res1[,1], y = res1[,2], z = res1[,3], xlab = "", ylab="", zlab="",
 box3d()
 rglwidget()
 rgl.close()
-```
-<br />
-Viz3D
-</td>
 
-<td align="center" valign="center">
-```{r}
+
+## --------------------------------------------------------------------------------------
 radialvis3d(data = df[,-c(1,2)][ll], cl = factor(df$era), domrp = F, doGtrans = F, 
             lwd = 3, alpha = 0.025, color = celadon.palette, with.class.labels = FALSE,
             ret.trans = F, pch =  c(16,17)[factor(df$mf)], point.cex = 0.175)
 rgl.viewpoint(zoom = 0.6)
 rglwidget()
 rgl.close()
-```
-<br />
-RadViz3D
-</td>
-</tr>
-</table>
 
-## Fig. S8: SARS-COV2 Dataset
-```{r}
+
+## --------------------------------------------------------------------------------------
 # load dataset from the radviz3d package
 df = sarscov2.us.variants
 
@@ -799,14 +586,9 @@ ll[c(2 ,3,4,6)] <- c(1, 7, 4, 6)
 ll[1] <- 5
 
 df$group <- factor(df$group, levels = unique(df$group))
-```
 
-<table width="500" border="0" cellpadding="0">
 
-<tr>
-
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 modradviz2d(x = df[,-c(1:3)][ll], 
             cl = factor(df$region), modify = F, ret.proj = T,
             coord.labels = colnames(df[,-c(1:3)][ll]), 
@@ -819,16 +601,9 @@ for (i in 1:10) {
   for (j in 1:nlevels(df$group))
     lines(x = dat[j:(j+1), 1], y = dat[j:(j+1), 2], lty = 2, col = kols[i], lwd = 1.5)
 }
-```
-<br />
-RadViz2D
-</td>
-</tr>
 
-<tr>
 
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 res1 = viz2d_3d(df[,-c(1:3)][ll])
 res1 = data.frame(res1, as.factor(df$region))
 colnames(res1) = c("x","y","z","class")
@@ -852,16 +627,9 @@ box3d(color = "black", lwd = 1)
 rgl.viewpoint(zoom = 0.6)
 rglwidget()
 rgl.close()
-```
-<br />
-Viz3D
-</td>
-</tr>
 
-<tr>
 
-<td align="center" valign="center">
-```{r}
+## --------------------------------------------------------------------------------------
 radviz3d::radialvis3d(data = df[,-c(1:3)][ll], 
                       cl = factor(df$region), domrp = F, 
                       doGtrans = F, lwd = 3, alpha = 0.025, color = kols, 
@@ -882,19 +650,4 @@ for (i in 1:10) {
 rgl.viewpoint(zoom = 0.6)
 rglwidget(width = "1500", height = "1500")
 rgl.close()
-```
-<br />
-RadViz3D
-</td>
-</tr>
-</table>
-
-
-
-
-
-
-
-
-
 
