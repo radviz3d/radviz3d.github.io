@@ -8,6 +8,8 @@ This site hosts experiments comparing RadViz3D to RadViz2D and Viz3D.
 
 This page contains a navigation bar on the left for accessing each dataset.
 
+(Warning: The loading time for the Visualizations page could be long.)
+
 ### Instructions for interactive views
 
 The 3D interactive plots are implemented with the `rgl` functions and here are instructions for manipulation:
