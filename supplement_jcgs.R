@@ -37,10 +37,10 @@ viz3d <- function(x, angles =  2*pi*(0:(ncol(x)-1))/ncol(x)) {
 wine.palette = brewer.pal(8,"Dark2")[c(1,2,3)]
 cb.palette = c("#A6CEE3", "#1F78B4", "#FDBF6F", "#FF7F00") 
 oil.palette = c(brewer.pal(8,"Dark2"), "cyan")
-# for celadon sample data
+# for celadons sample data
 glaze = brewer.pal(12,"Paired")[c(2,4,6,10)]
-celadon.palette  <-  brewer.pal(12,"Paired")[c(1:6,9,10)]
-celadon.palette  <- as.vector(apply(matrix(celadon.palette, nrow = 2), 2, 
+celadons.palette  <-  brewer.pal(12,"Paired")[c(1:6,9,10)]
+celadons.palette  <- as.vector(apply(matrix(celadons.palette, nrow = 2), 2, 
                                     FUN = function(x) (colorRampPalette(x)(4)))[c(2,4),])
 # for SARS-COV2 data
 kols1 <- c(RColorBrewer::brewer.pal(name = "Set2", n = 8)[-1],
@@ -521,7 +521,7 @@ rgl.close()
 
 ## --------------------------------------------------------------------------------------
 # load dataset from the radviz3d package
-df = celadon
+df = celadons
 
 ## Use hclust to find the order of coordinates for RadViz displays
 #xx  <-  t(scale(asin(sqrt(df.17[,-c(1:2)]))))
@@ -539,7 +539,7 @@ ll[c(11,14)] <- c(11, 12)
 ## --------------------------------------------------------------------------------------
 modradviz2d(x = df[,-c(1,2)][ll], cl = factor(df$era), modify = F, 
             coord.labels = colnames(df[,-c(1,2)]), class.labels = NULL,
-            palette = celadon.palette, pch = c(16,17)[factor(df$mf)],
+            palette = celadons.palette, pch = c(16,17)[factor(df$mf)],
             opt.axis.order = F)
 
 
@@ -553,7 +553,7 @@ par3d(windowRect = c(100, 100, 612, 612))
 # plot
 pch3d(x = res1[,1], y = res1[,2], z = res1[,3], xlab = "", ylab="", zlab="",
       axes = F, pch = c(16,17)[factor(df$mf)], cex = 0.55, 
-      color = celadon.palette)
+      color = celadons.palette)
 box3d()
 rglwidget()
 rgl.close()
@@ -561,7 +561,7 @@ rgl.close()
 
 ## --------------------------------------------------------------------------------------
 radialvis3d(data = df[,-c(1,2)][ll], cl = factor(df$era), domrp = F, doGtrans = F, 
-            lwd = 3, alpha = 0.025, color = celadon.palette, with.class.labels = FALSE,
+            lwd = 3, alpha = 0.025, color = celadons.palette, with.class.labels = FALSE,
             ret.trans = F, pch =  c(16,17)[factor(df$mf)], point.cex = 0.175)
 rgl.viewpoint(zoom = 0.6)
 rglwidget()
